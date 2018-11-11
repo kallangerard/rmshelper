@@ -12,6 +12,4 @@ import rmshelper
 
 
 class TestAuthentication(unittest.TestCase):
-    def test_get_secret(self):
-        secret = rmshelper.get_secret()
-        print(secret)
+    pass

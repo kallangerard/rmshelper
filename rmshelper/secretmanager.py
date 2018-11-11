@@ -50,4 +50,3 @@ def get_secret():
             return get_secret_value_response["SecretString"]
         else:
             return base64.b64decode(get_secret_value_response["SecretBinary"])
-
