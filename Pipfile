@@ -4,11 +4,11 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-requests = "*"
-pyxero = "*"
-awscli = "*"
 "boto3" = "*"
+awscli = "*"
 calc = "*"
+pyxero = "*"
+requests = "*"
 
 [dev-packages]
 black = "*"
