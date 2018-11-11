@@ -1,3 +1,11 @@
+BASE_URL = "https://api.current-rms.com/api/v1"
+
+
+class Manager:
+    def __init__(self, name):
+        pass
+
+
 class RMS:
     """Handler for Current RMS APIv1"""
 

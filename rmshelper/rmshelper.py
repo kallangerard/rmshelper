@@ -1,5 +1,8 @@
 import requests
 import json
+import os
+
+
 from .secretmanager import get_secret
 
 
