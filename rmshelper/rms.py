@@ -33,18 +33,19 @@ class RMS:
         """for every item in the GET dictionary, create an object to handle GET json"""
         for key, uri in self.GET_DICTIONARY.items():
             name = "get_" + key
-            url = self.BASE_URL + uri
-            setattr(self, name, url)
+            setattr(self, name, self.test_method(uri))
 
-    def test_method(self):
-        pass
+    def test_method(self, uri):
+        url = self.BASE_URL + uri
+        # logging.debug(self)
+        # logging.debug(url)
 
 
 def Main():
     rms = RMS()
     rms.get()
-    id = "1234"
-    logging.debug(rms.get_opportunity.format(id=id))
+    print(rms.get_opportunity)
+    # logging.debug(rms.get_opportunity.format(id=id))
 
 
 if __name__ == "__main__":
