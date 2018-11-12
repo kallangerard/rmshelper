@@ -1,4 +1,4 @@
-BASE_URL = "https://api.current-rms.com/api/v1"
+import logging
 
 
 class Manager:
@@ -25,9 +25,28 @@ class RMS:
         "opportunity_revert_to_quote": "/opportunities/{id}/revert_to_quote",
     }
 
-    def __init__(self, method, credentials):
-        """for every item in the GET dictionary, create an object to handle GET json"""
-        if method.lower() == "get":
-            for name in self.GET_DICTIONARY:
-                setattr(self, name)
+    def __init__(self):
+        self.BASE_URL = "https://api.current-rms.com/api/v1"
+        pass
 
+    def get(self):
+        """for every item in the GET dictionary, create an object to handle GET json"""
+        for key, uri in self.GET_DICTIONARY.items():
+            name = "get_" + key
+            url = self.BASE_URL + uri
+            setattr(self, name, url)
+
+    def test_method(self):
+        pass
+
+
+def Main():
+    rms = RMS()
+    rms.get()
+    id = "1234"
+    logging.debug(rms.get_opportunity.format(id=id))
+
+
+if __name__ == "__main__":
+    logging.basicConfig(level=logging.DEBUG)
+    Main()
