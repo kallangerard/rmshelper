@@ -13,13 +13,35 @@ from rmshelper import RMS
 
 
 class TestAuthentication(unittest.TestCase):
+    pass
+
+
+class TestRMS(unittest.TestCase):
+    ID = 123
+    CREDENTIALS = "ABC"
+
     def test_rms_get(self):
-        id = 123
-        credentials = "ABC"
-        rms = RMS()
-        url = RMS.BASE_URL + "/opportunities/" + str(id)
-        response = rms.get_opportunity(credentials, id)
-        expected_response = {"url": url, "credentials": credentials}
+        """Test that rms.get_opportunity gives expected response
+        Dummy object in place for now
+        """
+        order = RMS()
+        url = RMS.BASE_URL + "/opportunities/" + str(self.ID)
+        # pylint: disable=E1101
+        response = order.get_opportunity(self.CREDENTIALS, self.ID)
+        logging.debug(response)
+        expected_response = {"url": url, "credentials": self.CREDENTIALS}
+        self.assertEqual(response, expected_response)
+
+    def test_rms_put(self):
+        """Test that rms.put_opportunity gives expected response
+        Dummy object in place for now
+        """
+        order = RMS()
+        url = RMS.BASE_URL + "/opportunities/" + str(self.ID)
+        # pylint: disable=E1101
+        response = order.put_opportunity(self.CREDENTIALS, self.ID)
+        logging.debug(response)
+        expected_response = {"url": url, "credentials": self.CREDENTIALS}
         self.assertEqual(response, expected_response)
 
 
