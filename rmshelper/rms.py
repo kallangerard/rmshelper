@@ -30,26 +30,29 @@ class RMS:
         """for every item in the GET dictionary, create an object to handle GET json"""
         for key, uri in self.GET_DICTIONARY.items():
             name = "get_" + key
-            logging.debug(name)
-            logging.debug(uri)
-            setattr(self, name, Manager._wrapper(name, uri))
+            # logging.debug(name)
+            # logging.debug(uri)
+            setattr(self, name, self._wrapper(name, uri))
 
-    class Manager(RMS):
-        def _wrapper(self, name, uri):
-            self.url = self.BASE_URL + uri
-            # self.name = name
-            logging.debug(f"Manager = {name}")
+    def _wrapper(self, name, uri):
+        url = self.BASE_URL + uri
 
-            def get_json(id):
-                logging.debug(f"{self} has URL {self.url} with ID {id}")
+        def get_json(credentials, id):
+            # Placeholder for eventual JSON GET function
+            id = str(id)
+            logging.debug(credentials)
+            formatted_url = url.format(id=id)
+            logging.debug(formatted_url)
+            response = {"url": formatted_url, "credentials": credentials}
+            logging.debug(response)
+            return response
 
-            self.name = get_json(id)
+        return get_json
 
 
 def Main():
-    rms = RMS()
-    # rms.get_opportunity("33")
-    # logging.debug(rms.get_opportunity.format(id=id))
+    order = RMS()
+    order.get_opportunity("Test Credentials", "33")
 
 
 if __name__ == "__main__":
