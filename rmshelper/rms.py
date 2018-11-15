@@ -31,7 +31,7 @@ class RMS:
         """for every item in the GET dictionary, create an object to handle GET json"""
         for key, uri in self.GET_DICTIONARY.items():
             self._method_iterator("get", key, uri)
-        """for every item in the PUT dictionary, create an object to handle GET json"""
+        """for every item in the PUT dictionary, create an object to handle PUT json"""
         for key, uri in self.PUT_DICTIONARY.items():
             self._method_iterator("put", key, uri)
 
