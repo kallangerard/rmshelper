@@ -63,6 +63,11 @@ class RMS:
         name = method.lower() + "_" + key
         setattr(self, name, self._wrapper(name, uri, method))
 
+    def headers(self, subdomain, token):
+        """ Handles API Authentication for RMS """
+        headers = {"X-SUBDOMAIN": subdomain, "X-AUTH-TOKEN": token}
+        return headers
+
 
 def Main():
     order = RMS()
