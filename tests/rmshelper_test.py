@@ -18,8 +18,8 @@ class TestAuthentication(unittest.TestCase):
 
 
 class TestRMS(unittest.TestCase):
-    ID = 123
-    CREDENTIALS = "ABC"
+    ID = os.environ.get("TEST_ID")
+    CREDENTIALS = os.environ.get("TEST_CREDENTIALS")
 
     def test_rms_get(self):
         """Test that rms.get_opportunity gives expected response
@@ -49,11 +49,10 @@ class TestRMS(unittest.TestCase):
 class TestSecretManager(unittest.TestCase):
     def test_get_secret(self):
         """ Tests Dev Secret Get Method for AWS """
-
-        region_name = "ap-southeast-2"
-        secret_name = "dev/rmshelper"
+        secret_name = os.environ.get("STAGE") + "/" + "rmshelper"
+        region_name = os.environ.get("AWS_REGION_NAME")
         secret = get_secret(secret_name, region_name)
-        self.assertEqual(secret.get("RMS_API_TOKEN"), "TESTDATA_RMS_API_TOKEN")
+        self.assertEqual(secret.get("PING"), "PONG")
 
 
 if __name__ == "__main__":

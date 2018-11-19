@@ -53,11 +53,11 @@ def get_secret(secret_name, region_name):
 
 if __name__ == "__main__":
     import logging
+    import os
 
     logging.basicConfig(level=logging.INFO)
     logging.info(f"Running {__name__} module")
-
-    secret_name = "dev/rmshelper"
-    region_name = "ap-southeast-2"
-    secret = get_secret(secret_name, region_name)
+    secret_name = os.environ.get("STAGE") + "/" + "rmshelper"
+    region_name = os.environ.get("AWS_REGION_NAME")
+    secret = get_secret(secret_name, region_name).get("PING")
     logging.info(f"Secret {secret}")
