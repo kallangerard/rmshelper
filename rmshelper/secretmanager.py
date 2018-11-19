@@ -4,13 +4,11 @@
 
 import boto3
 import base64
+import json
 from botocore.exceptions import ClientError
 
 
-def get_secret():
-
-    secret_name = "dev/rmshelper"
-    region_name = "ap-southeast-2"
+def get_secret(secret_name, region_name):
 
     # Create a Secrets Manager client
     session = boto3.session.Session()
@@ -47,6 +45,19 @@ def get_secret():
         # Decrypts secret using the associated KMS CMK.
         # Depending on whether the secret is a string or binary, one of these fields will be populated.
         if "SecretString" in get_secret_value_response:
+            response = json.dumps(get_secret_value_response)
             return get_secret_value_response["SecretString"]
         else:
             return base64.b64decode(get_secret_value_response["SecretBinary"])
+
+
+if __name__ == "__main__":
+    import logging
+
+    logging.basicConfig(level=logging.DEBUG)
+    logging.debug(f"Running {__name__} module")
+
+    secret_name = "dev/rmshelper"
+    region_name = "ap-southeast-2"
+    secret = get_secret(secret_name, region_name)
+    logging.debug(f"Secret {secret}")

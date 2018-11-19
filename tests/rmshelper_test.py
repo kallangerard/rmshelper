@@ -3,6 +3,7 @@ import logging
 import os
 import sys
 import unittest
+import json
 
 
 # Prepend ../ to PYTHONPATH so that we can import RMSHelper from there.
@@ -10,6 +11,7 @@ TESTS_ROOT = os.path.abspath(os.path.dirname(__file__))
 sys.path.insert(0, os.path.realpath(os.path.join(TESTS_ROOT, "..")))
 
 from rmshelper import RMS
+from rmshelper import get_secret
 
 
 class TestAuthentication(unittest.TestCase):
@@ -43,6 +45,16 @@ class TestRMS(unittest.TestCase):
         logging.debug(response)
         expected_response = {"url": url, "credentials": self.CREDENTIALS}
         self.assertEqual(response, expected_response)
+
+
+class TestSecretManager(unittest.TestCase):
+    def test_get_secret(self):
+        """ Tests Dev Secret Get Method for AWS """
+
+        region_name = "ap-southeast-2"
+        secret_name = "dev/rmshelper"
+        secret = get_secret(secret_name, region_name)
+        self.assertEqual(secret.get("RMS_API_TOKEN"), "TESTDATA_RMS_API_TOKEN")
 
 
 if __name__ == "__main__":
