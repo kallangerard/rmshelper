@@ -45,8 +45,8 @@ def get_secret(secret_name, region_name):
         # Decrypts secret using the associated KMS CMK.
         # Depending on whether the secret is a string or binary, one of these fields will be populated.
         if "SecretString" in get_secret_value_response:
-            response = json.dumps(get_secret_value_response)
-            return get_secret_value_response["SecretString"]
+            response = json.loads(get_secret_value_response["SecretString"])
+            return response
         else:
             return base64.b64decode(get_secret_value_response["SecretBinary"])
 
@@ -54,10 +54,10 @@ def get_secret(secret_name, region_name):
 if __name__ == "__main__":
     import logging
 
-    logging.basicConfig(level=logging.DEBUG)
-    logging.debug(f"Running {__name__} module")
+    logging.basicConfig(level=logging.INFO)
+    logging.info(f"Running {__name__} module")
 
     secret_name = "dev/rmshelper"
     region_name = "ap-southeast-2"
     secret = get_secret(secret_name, region_name)
-    logging.debug(f"Secret {secret}")
+    logging.info(f"Secret {secret}")

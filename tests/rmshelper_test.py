@@ -3,7 +3,6 @@ import logging
 import os
 import sys
 import unittest
-import json
 
 
 # Prepend ../ to PYTHONPATH so that we can import RMSHelper from there.
@@ -30,7 +29,7 @@ class TestRMS(unittest.TestCase):
         url = RMS.BASE_URL + "/opportunities/" + str(self.ID)
         # pylint: disable=E1101
         response = order.get_opportunity(self.CREDENTIALS, self.ID)
-        logging.debug(response)
+        logging.info(response)
         expected_response = {"url": url, "credentials": self.CREDENTIALS}
         self.assertEqual(response, expected_response)
 
@@ -42,7 +41,7 @@ class TestRMS(unittest.TestCase):
         url = RMS.BASE_URL + "/opportunities/" + str(self.ID)
         # pylint: disable=E1101
         response = order.put_opportunity(self.CREDENTIALS, self.ID)
-        logging.debug(response)
+        logging.info(response)
         expected_response = {"url": url, "credentials": self.CREDENTIALS}
         self.assertEqual(response, expected_response)
 
@@ -58,6 +57,6 @@ class TestSecretManager(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.DEBUG)
+    logging.basicConfig(level=logging.INFO)
     unittest.main()
 
