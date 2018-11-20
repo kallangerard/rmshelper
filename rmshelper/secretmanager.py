@@ -50,3 +50,8 @@ def get_secret():
             return get_secret_value_response["SecretString"]
         else:
             return base64.b64decode(get_secret_value_response["SecretBinary"])
+
+if __name__ == "__main__":
+    import logging
+    logging.basicConfig(level=logging.DEBUG)
+    logging.debug(get_secret())
