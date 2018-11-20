@@ -64,7 +64,7 @@ class RMS:
         setattr(self, name, self._wrapper(name, uri, method))
 
 
-def Main():
+def main():
     order = RMS()
     # pylint: disable=E1101
     logging.debug(order.get_opportunity("Test Credentials", 33))
@@ -74,4 +74,4 @@ def Main():
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)
-    Main()
+    main()
