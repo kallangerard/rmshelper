@@ -1,3 +1,3 @@
-from .rmshelper import RMSHelper
-from .rms import RMS
-from .secretmanager import get_secret
+from rmshelper.rmshelper import RMSHelper
+from rmshelper.rms import RMS
+from rmshelper.secretmanager import get_secret
