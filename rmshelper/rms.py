@@ -62,17 +62,8 @@ class RMS:
                 return put_json
 
         name = method.lower() + "_" + key
-        setattr(self, name, self.wrapper(name, uri, method))
+        setattr(self, name, wrapper(name, uri, method))
 
 
 def main():
-    order = RMS()
-    # pylint: disable=E1101
-    logging.debug(order.get_opportunity("Test Credentials", 2483))
-    # pylint: disable=E1101
-    logging.debug(order.put_opportunity("Test Credentials", 33))
-
-=======
-        setattr(self, name, wrapper(name, uri, method))
->>>>>>> RMS-Get
-
+    pass
