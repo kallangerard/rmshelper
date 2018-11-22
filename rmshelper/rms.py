@@ -38,7 +38,7 @@ class RMS:
             self._method_iterator("put", key, uri)
 
     def _method_iterator(self, method, key, uri):
-        def wrapper(self, name, uri, method):
+        def wrapper(name, uri, method):
             """Wrapper used to distribute calls to appropriate JSON method"""
             url = self.BASE_URL + uri
 
