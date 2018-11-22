@@ -29,7 +29,9 @@ class RMS:
     }
     PUT_DICTIONARY = {"opportunity": "/opportunities/{id}"}
 
-    def __init__(self):
+    def __init__(self, subdomain, token):
+
+        self.headers = {"X-SUBDOMAIN": subdomain, "X-AUTH-TOKEN": token}
         """for every item in the GET dictionary, create an object to handle GET json"""
         for key, uri in self.GET_DICTIONARY.items():
             self._method_iterator("get", key, uri)
@@ -44,19 +46,17 @@ class RMS:
 
             if method == "get":
 
-                def get_json(subdomain, token, id):
+                def get_json(id):
                     # Placeholder for eventual JSON GET function
                     formatted_url = url.format(id=str(id))
-                    handle = requests.get(
-                        formatted_url, headers=RMS.headers(subdomain, token)
-                    )
+                    handle = requests.get(formatted_url, headers=self.headers)
                     return json.loads(handle.text)
 
                 return get_json
 
             if method == "put":
 
-                def put_json(subdomain, token, id):
+                def put_json(id):
                     # Placeholder for eventual JSON PUT function
                     formatted_url = url.format(id=str(id))
                     response = {"url": formatted_url, "credentials": [subdomain, token]}
