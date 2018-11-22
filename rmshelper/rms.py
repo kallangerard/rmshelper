@@ -30,7 +30,7 @@ class RMS:
     PUT_DICTIONARY = {"opportunity": "/opportunities/{id}"}
 
     def __init__(self, subdomain, token):
-
+        # Creation of headers using subdomain and token for Requests
         self.headers = {"X-SUBDOMAIN": subdomain, "X-AUTH-TOKEN": token}
         """for every item in the GET dictionary, create an object to handle GET json"""
         for key, uri in self.GET_DICTIONARY.items():
@@ -43,7 +43,6 @@ class RMS:
         def wrapper(name, uri, method):
             """Wrapper used to distribute calls to appropriate JSON method"""
             url = self.BASE_URL + uri
-
             if method == "get":
 
                 def get_json(id):
@@ -58,28 +57,10 @@ class RMS:
 
                 def put_json(id):
                     # Placeholder for eventual JSON PUT function
-                    formatted_url = url.format(id=str(id))
-                    response = {"url": formatted_url, "credentials": [subdomain, token]}
-                    return response
+                    pass
 
                 return put_json
 
         name = method.lower() + "_" + key
         setattr(self, name, wrapper(name, uri, method))
 
-    def headers(self, subdomain, token):
-        response = {"X-SUBDOMAIN": subdomain, "X-AUTH-TOKEN": token}
-        return response
-
-
-def main():
-    order = RMS()
-    # pylint: disable=E1101
-    logging.debug(order.get_opportunity("Test Credentials", 2483))
-    # pylint: disable=E1101
-    logging.debug(order.put_opportunity("Test Credentials", 33))
-
-
-if __name__ == "__main__":
-    logging.basicConfig(level=logging.DEBUG)
-    main()
