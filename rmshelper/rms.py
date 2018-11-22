@@ -29,7 +29,9 @@ class RMS:
     }
     PUT_DICTIONARY = {"opportunity": "/opportunities/{id}"}
 
-    def __init__(self):
+    def __init__(self, subdomain, token):
+        # Creation of headers using subdomain and token for Requests
+        self.headers = {"X-SUBDOMAIN": subdomain, "X-AUTH-TOKEN": token}
         """for every item in the GET dictionary, create an object to handle GET json"""
         for key, uri in self.GET_DICTIONARY.items():
             self._method_iterator("get", key, uri)
@@ -37,45 +39,30 @@ class RMS:
         for key, uri in self.PUT_DICTIONARY.items():
             self._method_iterator("put", key, uri)
 
-    def _wrapper(self, name, uri, method):
-        """Wrapper used to distribute calls to appropriate JSON method"""
-        url = self.BASE_URL + uri
-
-        if method == "get":
-
-            def get_json(subdomain, token, id):
-                # Placeholder for eventual JSON GET function
-                formatted_url = url.format(id=str(id))
-                handle = requests.get(
-                    formatted_url, headers=RMS.headers(subdomain, token)
-                )
-                return json.loads(handle.text)
-
-            return get_json
-
-        if method == "put":
-
-            def put_json(subdomain, token, id):
-                # Placeholder for eventual JSON PUT function
-                formatted_url = url.format(id=str(id))
-                response = {"url": formatted_url, "credentials": [subdomain, token]}
-                return response
-
-            return put_json
-
     def _method_iterator(self, method, key, uri):
-        name = method.lower() + "_" + key
-        setattr(self, name, self._wrapper(name, uri, method))
+        def wrapper(name, uri, method):
+            """Wrapper used to distribute calls to appropriate JSON method"""
+            url = self.BASE_URL + uri
+            if method == "get":
 
-    def headers(self, subdomain, token):
-<<<<<<< HEAD
-        """ Handles API Authentication for RMS """
-        headers = {"X-SUBDOMAIN": subdomain, "X-AUTH-TOKEN": token}
-        return headers
-=======
-        response = {"X-SUBDOMAIN": subdomain, "X-AUTH-TOKEN": token}
-        return response
->>>>>>> 45641a5c60b53bdd90a1ec75222e0df81f173e80
+                def get_json(id):
+                    # Placeholder for eventual JSON GET function
+                    formatted_url = url.format(id=str(id))
+                    handle = requests.get(formatted_url, headers=self.headers)
+                    return json.loads(handle.text)
+
+                return get_json
+
+            if method == "put":
+
+                def put_json(id):
+                    # Placeholder for eventual JSON PUT function
+                    pass
+
+                return put_json
+
+        name = method.lower() + "_" + key
+        setattr(self, name, self.wrapper(name, uri, method))
 
 
 def main():
@@ -85,7 +72,7 @@ def main():
     # pylint: disable=E1101
     logging.debug(order.put_opportunity("Test Credentials", 33))
 
+=======
+        setattr(self, name, wrapper(name, uri, method))
+>>>>>>> RMS-Get
 
-if __name__ == "__main__":
-    logging.basicConfig(level=logging.DEBUG)
-    main()

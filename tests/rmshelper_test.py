@@ -3,14 +3,13 @@ import logging
 import os
 import sys
 import unittest
+import json
 
+# Temporary path alteration method
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-# Prepend ../ to PYTHONPATH so that we can import RMSHelper from there.
-TESTS_ROOT = os.path.abspath(os.path.dirname(__file__))
-sys.path.insert(0, os.path.realpath(os.path.join(TESTS_ROOT, "..")))
-
-from rmshelper import RMS
-from rmshelper import get_secret
+from rmshelper import rms
+from rmshelper import secretmanager
 
 
 class TestAuthentication(unittest.TestCase):
@@ -18,40 +17,41 @@ class TestAuthentication(unittest.TestCase):
 
 
 class TestRMS(unittest.TestCase):
-    ID = os.environ.get("TEST_ID")
-    CREDENTIALS = os.environ.get("TEST_CREDENTIALS")
+    def setUp(self):
+        self.ID = os.environ.get("TEST_ID")
+        self.CREDENTIALS = os.environ.get("TEST_CREDENTIALS")
+        secret_name = os.environ.get("STAGE") + "/" + "rmshelper"
+        region_name = os.environ.get("AWS_REGION_NAME")
+        secret = secretmanager.get_secret(secret_name, region_name)
+        subdomain = secret.get("SUBDOMAIN")
+        token = secret.get("RMS_TOKEN")
+        self.order = rms.RMS(subdomain, token)
 
-    def test_rms_get(self):
+    def test_rms_get_opportunity(self):
         """Test that rms.get_opportunity gives expected response
-        Dummy object in place for now
         """
-        order = RMS()
-        url = RMS.BASE_URL + "/opportunities/" + str(self.ID)
         # pylint: disable=E1101
-        response = order.get_opportunity(self.CREDENTIALS, self.ID)
-        logging.info(response)
-        expected_response = {"url": url, "credentials": self.CREDENTIALS}
-        self.assertEqual(response, expected_response)
+        response = self.order.get_opportunity(self.ID)
+        logging.info(json.dumps(response, indent=2))
+        expected_response = os.environ.get("RMS_TEST_OPPORTUNITY_NUMBER")
+        self.assertEqual(response["opportunity"]["number"], expected_response)
 
     def test_rms_put(self):
         """Test that rms.put_opportunity gives expected response
         Dummy object in place for now
         """
-        order = RMS()
-        url = RMS.BASE_URL + "/opportunities/" + str(self.ID)
-        # pylint: disable=E1101
-        response = order.put_opportunity(self.CREDENTIALS, self.ID)
-        logging.info(response)
-        expected_response = {"url": url, "credentials": self.CREDENTIALS}
-        self.assertEqual(response, expected_response)
+        # TODO: Put test method
+        pass
 
 
 class TestSecretManager(unittest.TestCase):
     def test_get_secret(self):
-        """ Tests Dev Secret Get Method for AWS """
+        """ Tests {stage}/rmshelper Secret Get Method for AWS
+        Insert a "PING":"PONG" key:value pair into your secret
+        """
         secret_name = os.environ.get("STAGE") + "/" + "rmshelper"
         region_name = os.environ.get("AWS_REGION_NAME")
-        secret = get_secret(secret_name, region_name)
+        secret = secretmanager.get_secret(secret_name, region_name)
         self.assertEqual(secret.get("PING"), "PONG")
 
 
