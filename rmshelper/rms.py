@@ -1,4 +1,6 @@
 import logging
+import requests
+import json
 
 
 class Manager:
@@ -41,20 +43,22 @@ class RMS:
 
         if method == "get":
 
-            def get_json(credentials, id):
+            def get_json(subdomain, token, id):
                 # Placeholder for eventual JSON GET function
                 formatted_url = url.format(id=str(id))
-                response = {"url": formatted_url, "credentials": credentials}
-                return response
+                handle = requests.get(
+                    formatted_url, headers=RMS.headers(subdomain, token)
+                )
+                return json.loads(handle.text)
 
             return get_json
 
         if method == "put":
 
-            def put_json(credentials, id):
+            def put_json(subdomain, token, id):
                 # Placeholder for eventual JSON PUT function
                 formatted_url = url.format(id=str(id))
-                response = {"url": formatted_url, "credentials": credentials}
+                response = {"url": formatted_url, "credentials": [subdomain, token]}
                 return response
 
             return put_json
@@ -64,19 +68,24 @@ class RMS:
         setattr(self, name, self._wrapper(name, uri, method))
 
     def headers(self, subdomain, token):
+<<<<<<< HEAD
         """ Handles API Authentication for RMS """
         headers = {"X-SUBDOMAIN": subdomain, "X-AUTH-TOKEN": token}
         return headers
+=======
+        response = {"X-SUBDOMAIN": subdomain, "X-AUTH-TOKEN": token}
+        return response
+>>>>>>> 45641a5c60b53bdd90a1ec75222e0df81f173e80
 
 
-def Main():
+def main():
     order = RMS()
     # pylint: disable=E1101
-    logging.debug(order.get_opportunity("Test Credentials", 33))
+    logging.debug(order.get_opportunity("Test Credentials", 2483))
     # pylint: disable=E1101
     logging.debug(order.put_opportunity("Test Credentials", 33))
 
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)
-    Main()
+    main()
