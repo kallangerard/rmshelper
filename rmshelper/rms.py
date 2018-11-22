@@ -37,35 +37,35 @@ class RMS:
         for key, uri in self.PUT_DICTIONARY.items():
             self._method_iterator("put", key, uri)
 
-    def _wrapper(self, name, uri, method):
-        """Wrapper used to distribute calls to appropriate JSON method"""
-        url = self.BASE_URL + uri
-
-        if method == "get":
-
-            def get_json(subdomain, token, id):
-                # Placeholder for eventual JSON GET function
-                formatted_url = url.format(id=str(id))
-                handle = requests.get(
-                    formatted_url, headers=RMS.headers(subdomain, token)
-                )
-                return json.loads(handle.text)
-
-            return get_json
-
-        if method == "put":
-
-            def put_json(subdomain, token, id):
-                # Placeholder for eventual JSON PUT function
-                formatted_url = url.format(id=str(id))
-                response = {"url": formatted_url, "credentials": [subdomain, token]}
-                return response
-
-            return put_json
-
     def _method_iterator(self, method, key, uri):
+        def wrapper(self, name, uri, method):
+            """Wrapper used to distribute calls to appropriate JSON method"""
+            url = self.BASE_URL + uri
+
+            if method == "get":
+
+                def get_json(subdomain, token, id):
+                    # Placeholder for eventual JSON GET function
+                    formatted_url = url.format(id=str(id))
+                    handle = requests.get(
+                        formatted_url, headers=RMS.headers(subdomain, token)
+                    )
+                    return json.loads(handle.text)
+
+                return get_json
+
+            if method == "put":
+
+                def put_json(subdomain, token, id):
+                    # Placeholder for eventual JSON PUT function
+                    formatted_url = url.format(id=str(id))
+                    response = {"url": formatted_url, "credentials": [subdomain, token]}
+                    return response
+
+                return put_json
+
         name = method.lower() + "_" + key
-        setattr(self, name, self._wrapper(name, uri, method))
+        setattr(self, name, wrapper(name, uri, method))
 
     def headers(self, subdomain, token):
         response = {"X-SUBDOMAIN": subdomain, "X-AUTH-TOKEN": token}
