@@ -19,7 +19,6 @@ class TestAuthentication(unittest.TestCase):
 class TestRMS(unittest.TestCase):
     def setUp(self):
         self.ID = os.environ.get("TEST_ID")
-        self.CREDENTIALS = os.environ.get("TEST_CREDENTIALS")
         secret_name = os.environ.get("STAGE") + "/" + "rmshelper"
         region_name = os.environ.get("AWS_REGION_NAME")
         secret = secretmanager.get_secret(secret_name, region_name)
@@ -32,9 +31,10 @@ class TestRMS(unittest.TestCase):
         """
         # pylint: disable=E1101
         response = self.order.get_opportunity(self.ID)
+        opportunity_number = response["opportunity"]["number"]
         logging.info(json.dumps(response, indent=2))
         expected_response = os.environ.get("RMS_TEST_OPPORTUNITY_NUMBER")
-        self.assertEqual(response["opportunity"]["number"], expected_response)
+        self.assertEqual(opportunity_number, expected_response)
 
     def test_rms_put(self):
         """Test that rms.put_opportunity gives expected response
