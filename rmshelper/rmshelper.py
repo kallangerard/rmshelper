@@ -9,20 +9,23 @@ from xero.exceptions import XeroNotFound
 from datetime import datetime
 from dateutil.parser import parse
 
-from .rms import RMSManager
-from .secretmanager import get_secret
+from rmshelper.rms import RMSManager
+from rmshelper.secretmanager import get_secret
 
 
 class XeroRMS:
-    def __init__(self, xero_consumer_secret, xero_private_key):
+    def __init__(self, xero_consumer_key, xero_private_key):
 
-        credentials = PrivateCredentials(xero_consumer_secret, xero_private_key)
+        credentials = PrivateCredentials(xero_consumer_key, xero_private_key)
         self.xero = Xero(credentials)
 
     def get_invoice_uuid(self, invoice_number):
         # pylint: disable=E1101
         data = self.xero.invoices.filter(InvoiceNumber=invoice_number)
-        return data[0]["InvoiceID"]
+        logging.info(f"INVOICE OBJECT")
+        logging.info(data)
+        invoice_uuid = data[0]["InvoiceID"]
+        return invoice_uuid
 
     def clean_invoice(self, invoice_uuid):
         """
@@ -70,23 +73,19 @@ def batch_quick_invoice(*args):
 
 
 region_name = os.environ.get("AWS_REGION_NAME")
+logging.debug(f"Region Name: {region_name}")
 xero_secret_name = os.environ.get("STAGE") + "/xero"
+logging.debug(f"xero_secret_name: {xero_secret_name}")
 rmshelper_secret_name = os.environ.get("STAGE") + "/rmshelper"
+logging.debug(f"rmshelper_secret_name: {rmshelper_secret_name}")
 rmshelper_secret = json.loads(get_secret(rmshelper_secret_name, region_name))
 
-xero_consumer_secret = rmshelper_secret.get("XERO_CONSUMER_SECRET")
+xero_consumer_key = rmshelper_secret.get("XERO_CONSUMER_KEY")
 xero_private_key = get_secret(xero_secret_name, region_name)
 
 rms_subdomain = rmshelper_secret.get("RMS_SUBDOMAIN")
 rms_token = rmshelper_secret.get("RMS_TOKEN")
 
-xero_order = XeroRMS(xero_consumer_secret, xero_private_key)
+xero_order = XeroRMS(xero_consumer_key, xero_private_key)
 rms_order = RMSManager(rms_subdomain, rms_token)
 
-
-def main():
-    logging.basicConfig(level=logging.INFO)
-
-
-if __name__ == "__main__":
-    main()
