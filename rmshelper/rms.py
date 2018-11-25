@@ -79,18 +79,11 @@ class RMSManager:
         handle = requests.post(url, headers=self.headers, json=payload)
         logging.info(f"Creating Invoice. Status code: {handle.status_code}")
         json_object = handle.json()
-        if issue == True:
-            invoice_id = json_object["invoice"]["id"]
-            # pylint: disable=E1101
-            self.issue_invoice(invoice_id)
-            if post == True:
-                url = f"{self.BASE_URL}/invoices/{invoice_id}/post"
-                logging.debug(url)
-                handle = requests.post(url, headers=self.headers)
-                logging.debug(handle.status_code)
-                json_object = handle.json()
-        return json_object
-
-
-def main():
-    pass
+        invoice_id = json_object["invoice"]["id"]
+        # pylint: disable=E1101
+        self.get_issue_invoice(invoice_id)
+        url = f"{self.BASE_URL}/invoices/{invoice_id}/post"
+        logging.debug(url)
+        handle = requests.post(url, headers=self.headers)
+        logging.debug(handle.status_code)
+        return handle

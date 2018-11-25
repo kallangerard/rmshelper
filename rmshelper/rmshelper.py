@@ -48,7 +48,9 @@ class XeroRMS:
                     i.pop(ii, None)
             data[0]["LineItems"] = cleaned_items
             self.xero.invoices.save(data)
-            print("Cleaned Invoice")
+            print(
+                f"Cleaned Invoice https://go.xero.com/AccountsReceivable/View.aspx?InvoiceID={invoice_uuid}"
+            )
         # Otherwise do nothing.
         else:
             print("Invoice already clean")
@@ -57,11 +59,16 @@ class XeroRMS:
 def quick_invoice(opportunity_id):
     """ Function for performing a quick invoice end to end.
     Will create an invoice using the inbuilt RMS methods, post it to Xero and then clean the invoice for junk line items.
+    Returns Xero Invoice uuid
     """
     rms_invoice = rms_order.post_invoice(opportunity_id)
-    xero_invoice_number = rms_invoice["invoice"]["id"]
+    xero_invoice_number = rms_invoice.json()["invoice"]["number"]
     xero_invoice_uuid = xero_order.get_invoice_uuid(xero_invoice_number)
     xero_order.clean_invoice(xero_invoice_uuid)
+    logging.info(
+        f"Opportunity {opportunity_id} has been clean invoiced {xero_invoice_number}"
+    )
+    return xero_invoice_uuid
 
 
 def batch_quick_invoice(*args):
@@ -72,6 +79,7 @@ def batch_quick_invoice(*args):
             logging.info("Failed to process Order {order}")
 
 
+# logging.basicConfig(level=logging.DEBUG)
 region_name = os.environ.get("AWS_REGION_NAME")
 logging.debug(f"Region Name: {region_name}")
 xero_secret_name = os.environ.get("STAGE") + "/xero"
@@ -83,7 +91,7 @@ rmshelper_secret = json.loads(get_secret(rmshelper_secret_name, region_name))
 xero_consumer_key = rmshelper_secret.get("XERO_CONSUMER_KEY")
 xero_private_key = get_secret(xero_secret_name, region_name)
 
-rms_subdomain = rmshelper_secret.get("RMS_SUBDOMAIN")
+rms_subdomain = rmshelper_secret.get("SUBDOMAIN")
 rms_token = rmshelper_secret.get("RMS_TOKEN")
 
 xero_order = XeroRMS(xero_consumer_key, xero_private_key)
