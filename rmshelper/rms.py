@@ -87,6 +87,8 @@ class RMSManager:
                 url = f"{self.BASE_URL}/invoices/{invoice_id}/post"
                 logging.debug(url)
                 handle = requests.post(url, headers=self.headers)
+                logging.debug(handle.status_code)
+                json_object = handle.json()
         return json_object
 
 
