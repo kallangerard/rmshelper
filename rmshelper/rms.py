@@ -49,6 +49,7 @@ class RMS:
                     # Placeholder for eventual JSON GET function
                     formatted_url = url.format(id=str(id))
                     handle = requests.get(formatted_url, headers=self.headers)
+                    logging.info(f"Status Code {handle.status_code}")
                     return json.loads(handle.text)
 
                 return get_json
@@ -56,13 +57,35 @@ class RMS:
             if method == "put":
 
                 def put_json(id):
-                    # Placeholder for eventual JSON PUT function
+                    # TODO: Placeholder for eventual JSON PUT function
                     pass
 
                 return put_json
 
         name = method.lower() + "_" + key
         setattr(self, name, wrapper(name, uri, method))
+
+    def post_invoice(self, opportunity_id, issue=True, post=True):
+        """ Creates a standard invoice using inbuilt RMS method 
+        Returns invoice as JSON object"""
+        payload = {
+            "opportunity_id": opportunity_id,
+            "group_by": 0,  # Invoice grouped by items
+            "part_invoice_type": 0,  # 0 = Standard Invoice type
+            "invoice": {"owned_by": 1},
+        }
+        url = f"{self.BASE_URL}/invoices"
+        logging.debug(url)
+        handle = requests.post(url, headers=self.headers, json=payload)
+        logging.info(f"Creating Invoice. Status code: {handle.status_code}")
+        json_object = handle.json()
+        if issue == True:
+            invoice_id = json_object["invoice"]["id"]
+            # pylint: disable=E1101
+            self.issue_invoice(invoice_id)
+            if post == True:
+                pass
+        return json_object
 
 
 def main():
