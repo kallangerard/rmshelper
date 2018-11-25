@@ -8,8 +8,9 @@ import json
 # Temporary path alteration method
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from rmshelper import rms
-from rmshelper import secretmanager
+from rmshelper.rms import RMSManager
+from rmshelper.secretmanager import get_secret
+import rmshelper.rmshelper as rmshelper
 
 
 class TestAuthentication(unittest.TestCase):
@@ -21,10 +22,10 @@ class TestRMS(unittest.TestCase):
         self.ID = os.environ.get("TEST_ID")
         secret_name = os.environ.get("STAGE") + "/" + "rmshelper"
         region_name = os.environ.get("AWS_REGION_NAME")
-        secret = json.loads(secretmanager.get_secret(secret_name, region_name))
+        secret = json.loads(get_secret(secret_name, region_name))
         subdomain = secret.get("SUBDOMAIN")
         token = secret.get("RMS_TOKEN")
-        self.order = rms.RMS(subdomain, token)
+        self.order = RMSManager(subdomain, token)
 
     def test_rms_get_opportunity(self):
         """Test that rms.get_opportunity gives expected response
@@ -44,6 +45,17 @@ class TestRMS(unittest.TestCase):
         pass
 
 
+class TestRMSHelper(unittest.TestCase):
+    logging.basicConfig(level=logging.INFO)
+
+    def test_get_xero_invoice_uuid(self):
+        invoice_number = os.environ.get("TEST_XERO_INVOICE_NUMBER")
+        logging.debug(f"Xero Invoice Number: {invoice_number}")
+        test_invoice_uuid = os.environ.get("TEST_XERO_INVOICE_UUID")
+        invoice_uuid = rmshelper.xero_order.get_invoice_uuid(invoice_number)
+        self.assertEqual(invoice_uuid, test_invoice_uuid)
+
+
 class TestSecretManager(unittest.TestCase):
     def test_get_secret_rms(self):
         """ Tests {stage}/rmshelper Secret Get Method for AWS
@@ -51,19 +63,19 @@ class TestSecretManager(unittest.TestCase):
         """
         secret_name = os.environ.get("STAGE") + "/rmshelper"
         region_name = os.environ.get("AWS_REGION_NAME")
-        secret = json.loads(secretmanager.get_secret(secret_name, region_name))
+        secret = json.loads(get_secret(secret_name, region_name))
         self.assertEqual(secret.get("PING"), "PONG")
 
     def test_get_xero_key(self):
         """ Tests {stage}/xero Secret Key Get method for AWS"""
         secret_name = os.environ.get("STAGE") + "/xero"
         region_name = os.environ.get("AWS_REGION_NAME")
-        secret = secretmanager.get_secret(secret_name, region_name)
+        secret = get_secret(secret_name, region_name)
         lines = secret.splitlines()
         begin_rsa = "-----BEGIN RSA PRIVATE KEY-----"
         self.assertEqual(lines[0], begin_rsa)
 
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO)
-    # unittest.main()
+    logging.basicConfig(level=logging.DEBUG)
+    unittest.main()
