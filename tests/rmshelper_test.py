@@ -49,14 +49,14 @@ class TestSecretManager(unittest.TestCase):
         """ Tests {stage}/rmshelper Secret Get Method for AWS
         Insert a "PING":"PONG" key:value pair into your secret
         """
-        secret_name = os.environ.get("STAGE") + "/" + "rmshelper"
+        secret_name = os.environ.get("STAGE") + "/rmshelper"
         region_name = os.environ.get("AWS_REGION_NAME")
         secret = json.loads(secretmanager.get_secret(secret_name, region_name))
         self.assertEqual(secret.get("PING"), "PONG")
 
     def test_get_xero_key(self):
         """ Tests {stage}/xero Secret Key Get method for AWS"""
-        secret_name = os.environ.get("STAGE") + "/" + "xero"
+        secret_name = os.environ.get("STAGE") + "/xero"
         region_name = os.environ.get("AWS_REGION_NAME")
         secret = secretmanager.get_secret(secret_name, region_name)
         lines = secret.splitlines()

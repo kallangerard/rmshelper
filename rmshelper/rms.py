@@ -8,7 +8,7 @@ class Manager:
         pass
 
 
-class RMS:
+class RMSManager:
     """Handler for Current RMS APIv1"""
 
     BASE_URL = "https://api.current-rms.com/api/v1"
@@ -84,7 +84,9 @@ class RMS:
             # pylint: disable=E1101
             self.issue_invoice(invoice_id)
             if post == True:
-                pass
+                url = f"{self.BASE_URL}/invoices/{invoice_id}/post"
+                logging.debug(url)
+                handle = requests.post(url, headers=self.headers)
         return json_object
 
 
