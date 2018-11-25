@@ -2,7 +2,7 @@ import requests
 import json
 import os
 import logging
-from secretmanager import get_secret
+from .secretmanager import get_secret
 from xero import Xero
 from xero.auth import PrivateCredentials
 from xero.exceptions import XeroNotFound

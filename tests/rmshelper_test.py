@@ -21,7 +21,7 @@ class TestRMS(unittest.TestCase):
         self.ID = os.environ.get("TEST_ID")
         secret_name = os.environ.get("STAGE") + "/" + "rmshelper"
         region_name = os.environ.get("AWS_REGION_NAME")
-        secret = secretmanager.get_secret(secret_name, region_name)
+        secret = json.loads(secretmanager.get_secret(secret_name, region_name))
         subdomain = secret.get("SUBDOMAIN")
         token = secret.get("RMS_TOKEN")
         self.order = rms.RMS(subdomain, token)
@@ -45,13 +45,13 @@ class TestRMS(unittest.TestCase):
 
 
 class TestSecretManager(unittest.TestCase):
-    def test_get_secret(self):
+    def test_get_secret_rms(self):
         """ Tests {stage}/rmshelper Secret Get Method for AWS
         Insert a "PING":"PONG" key:value pair into your secret
         """
         secret_name = os.environ.get("STAGE") + "/" + "rmshelper"
         region_name = os.environ.get("AWS_REGION_NAME")
-        secret = secretmanager.get_secret(secret_name, region_name)
+        secret = json.loads(secretmanager.get_secret(secret_name, region_name))
         self.assertEqual(secret.get("PING"), "PONG")
 
 

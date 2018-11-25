@@ -7,6 +7,8 @@ import base64
 import json
 from botocore.exceptions import ClientError
 
+# TODO: Create decorator for get_secret_json and get_secret_string
+
 
 def get_secret(secret_name, region_name):
 
@@ -45,7 +47,7 @@ def get_secret(secret_name, region_name):
         # Decrypts secret using the associated KMS CMK.
         # Depending on whether the secret is a string or binary, one of these fields will be populated.
         if "SecretString" in get_secret_value_response:
-            response = json.loads(get_secret_value_response["SecretString"])
+            response = get_secret_value_response["SecretString"]
             return response
         else:
             return base64.b64decode(get_secret_value_response["SecretBinary"])
@@ -57,7 +59,7 @@ if __name__ == "__main__":
 
     logging.basicConfig(level=logging.INFO)
     logging.info(f"Running {__name__} module")
-    secret_name = os.environ.get("STAGE") + "/" + "rmshelper"
+    secret_name = os.environ.get("STAGE") + "/" + "xero"
     region_name = os.environ.get("AWS_REGION_NAME")
-    secret = get_secret(secret_name, region_name).get("PING")
+    secret = get_secret(secret_name, region_name)
     logging.info(f"Secret {secret}")
