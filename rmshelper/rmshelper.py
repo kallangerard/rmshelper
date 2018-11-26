@@ -27,7 +27,7 @@ class XeroRMS:
         invoice_uuid = data[0]["InvoiceID"]
         return invoice_uuid
 
-    def clean_invoice(self, invoice_uuid):
+    def clean_invoice(self, invoice_uuid, description_headers=None):
         """
         Will clean invoice using uuid provided and save in place a neat copy.
         Removes any items that do not have a UnitAmount or UnitAmount == 0
@@ -47,6 +47,7 @@ class XeroRMS:
                 for ii in remove_fields:
                     i.pop(ii, None)
             data[0]["LineItems"] = cleaned_items
+            # TODO: Add method for inserting order dates and hire agreement
             self.xero.invoices.save(data)
             print(
                 f"Cleaned Invoice https://go.xero.com/AccountsReceivable/View.aspx?InvoiceID={invoice_uuid}"
@@ -54,6 +55,24 @@ class XeroRMS:
         # Otherwise do nothing.
         else:
             print("Invoice already clean")
+
+
+def batch_invoice(view_id):
+    # pylint: disable=E1101
+    # TODO: Add function to deal with pages
+    orders = rms_order.get_opportunities(params={"view_id": view_id})
+    for order in orders["opportunities"]:
+        opportunity_id = order["id"]
+        if order["custom_fields"]["disable_auto_invoice"] == "Yes":
+            print(f"Skipping Opportunity {opportunity_id}")
+            continue
+        if order["charge_including_tax_total"] == "0.0":
+            print(f"Marking $0 Opportunity {opportunity_id} as Invoiced")
+            toggle_opportunity_invoiced_status(opportunity_id, override=True)
+            continue
+        else:
+            print(f"Invoicing Opportunity {opportunity_id}")
+            quick_invoice(opportunity_id)  # if order[""]
 
 
 def quick_invoice(opportunity_id):
@@ -109,4 +128,6 @@ rms_token = rmshelper_secret.get("RMS_TOKEN")
 
 xero_order = XeroRMS(xero_consumer_key, xero_private_key)
 rms_order = RMSManager(rms_subdomain, rms_token)
+
+rms_invoicable_id = os.environ.get("RMS_INVOICABLE_ID")
 
