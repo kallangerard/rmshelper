@@ -29,6 +29,16 @@ class RMSManager:
     }
     PUT_DICTIONARY = {"opportunity": "/opportunities/{id}"}
 
+    OPPORTUNITY_KEYS_TO_CLEAN = [
+        "updated_at",
+        "owner",
+        "member",
+        "billing_address",
+        "venue",
+        "destination",
+        "opportunity_surcharges",
+    ]
+
     def __init__(self, subdomain, token):
         # Creation of headers using subdomain and token for Requests
         self.headers = {"X-SUBDOMAIN": subdomain, "X-AUTH-TOKEN": token}
@@ -48,17 +58,27 @@ class RMSManager:
                 def get_json(id):
                     # Placeholder for eventual JSON GET function
                     formatted_url = url.format(id=str(id))
-                    handle = requests.get(formatted_url, headers=self.headers)
-                    logging.info(f"Status Code {handle.status_code}")
-                    return json.loads(handle.text)
+                    r = requests.get(formatted_url, headers=self.headers)
+                    logging.info(f"Status Code {r.status_code}")
+                    return json.loads(r.text)
 
                 return get_json
 
             if method == "put":
 
-                def put_json(id):
-                    # TODO: Placeholder for eventual JSON PUT function
-                    pass
+                def put_json(id, payload):
+                    """ Put requests method, reponds with Status Code """
+
+                    def opportunity_cleaner(keys, opportunity):
+                        opportunity.pop("meta")
+                        for key in keys:
+                            opportunity["opportunity"].pop(key)
+
+                    formatted_url = url.format(id=str(id))
+                    # Clean Opportunity keys so RMS will not Error 500
+                    opportunity_cleaner(self.OPPORTUNITY_KEYS_TO_CLEAN, payload)
+                    r = requests.put(formatted_url, headers=self.headers, json=payload)
+                    return r
 
                 return put_json
 
@@ -87,3 +107,15 @@ class RMSManager:
         handle = requests.post(url, headers=self.headers)
         logging.debug(handle.status_code)
         return handle
+
+    def toggle_opportunity_invoiced_status(self, opportunity_id, override=None):
+        # pylint: disable=E1101
+        opportunity = self.get_opportunity(opportunity_id)
+        if override == None:
+            x = opportunity["opportunity"]["invoiced"]
+            opportunity["opportunity"]["invoiced"] = not x
+        if override == True or False:
+            opportunity["opportunity"]["invoiced"] = override
+        # pylint: disable=E1101
+        opportunity = self.put_opportunity(opportunity_id, opportunity)
+        return opportunity
