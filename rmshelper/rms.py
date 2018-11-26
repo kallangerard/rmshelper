@@ -87,11 +87,9 @@ class MethodManager(RMSManager):
 
     def get_json(self, id=None, params=None):
         url = self.url
-        # Placeholder for eventual JSON GET function
         if id != None:
             url = url.format(id=str(id))
         r = requests.get(url, headers=self.headers, params=params)
-        print(r.url)
         logging.info(f"Status Code {r.status_code}")
         return json.loads(r.text)
 
