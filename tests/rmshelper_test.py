@@ -31,7 +31,7 @@ class TestRMS(unittest.TestCase):
         """Test that rms.get_opportunity gives expected response
         """
         # pylint: disable=E1101
-        response = self.order.get_opportunity(self.ID)
+        response = self.order.get_opportunity(id=self.ID)
         opportunity_number = response["opportunity"]["number"]
         logging.info(json.dumps(response, indent=2))
         expected_response = os.environ.get("RMS_TEST_OPPORTUNITY_NUMBER")

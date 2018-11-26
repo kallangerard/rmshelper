@@ -81,7 +81,7 @@ def batch_quick_invoice(*args):
 
 def toggle_opportunity_invoiced_status(opportunity_id, override=None):
     # pylint: disable=E1101
-    opportunity = rms_order.get_opportunity(opportunity_id)
+    opportunity = rms_order.get_opportunity(id=opportunity_id)
     if override == None:
         x = opportunity["opportunity"]["invoiced"]
         opportunity["opportunity"]["invoiced"] = not x
