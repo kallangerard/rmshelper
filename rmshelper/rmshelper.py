@@ -79,6 +79,19 @@ def batch_quick_invoice(*args):
             logging.info("Failed to process Order {order}")
 
 
+def toggle_opportunity_invoiced_status(opportunity_id, override=None):
+    # pylint: disable=E1101
+    opportunity = rms_order.get_opportunity(opportunity_id)
+    if override == None:
+        x = opportunity["opportunity"]["invoiced"]
+        opportunity["opportunity"]["invoiced"] = not x
+    if override == True or False:
+        opportunity["opportunity"]["invoiced"] = override
+    # pylint: disable=E1101
+    opportunity = rms_order.put_opportunity(opportunity_id, opportunity)
+    return opportunity
+
+
 # logging.basicConfig(level=logging.DEBUG)
 region_name = os.environ.get("AWS_REGION_NAME")
 logging.debug(f"Region Name: {region_name}")

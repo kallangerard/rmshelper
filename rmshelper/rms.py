@@ -108,14 +108,3 @@ class RMSManager:
         logging.debug(handle.status_code)
         return handle
 
-    def toggle_opportunity_invoiced_status(self, opportunity_id, override=None):
-        # pylint: disable=E1101
-        opportunity = self.get_opportunity(opportunity_id)
-        if override == None:
-            x = opportunity["opportunity"]["invoiced"]
-            opportunity["opportunity"]["invoiced"] = not x
-        if override == True or False:
-            opportunity["opportunity"]["invoiced"] = override
-        # pylint: disable=E1101
-        opportunity = self.put_opportunity(opportunity_id, opportunity)
-        return opportunity
