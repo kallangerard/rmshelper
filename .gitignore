@@ -8,6 +8,7 @@ __pycache__/
 
 # Distribution / packaging
 .Python
+env/
 build/
 develop-eggs/
 dist/
@@ -25,7 +26,11 @@ wheels/
 *.egg
 MANIFEST
 
-# PyInstaller
+# Serverless directories
+.serverless
+local_test.py
+.vscode/settings.json
+ PyInstaller
 #  Usually these files are written by a python script from a template
 #  before PyInstaller builds the exe, so as to inject date/other infos into it.
 *.manifest
