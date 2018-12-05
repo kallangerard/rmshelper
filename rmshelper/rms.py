@@ -21,6 +21,7 @@ class RMSManager:
         "opportunity_convert_to_quote": "/opportunities/{id}/convert_to_quote",
         "opportunity_convert_to_order": "/opportunities/{id}/convert_to_order",
         "opportunity_revert_to_quote": "/opportunities/{id}/revert_to_quote",
+        "stock_levels": "/stock_levels",
     }
     PUT_DICTIONARY = {"opportunity": "/opportunities/{id}"}
 
