@@ -72,22 +72,22 @@ def batch_invoice(view_id):
             continue
         else:
             print(f"Invoicing Opportunity {opportunity_id}")
-            quick_invoice(opportunity_id)  # if order[""]
+            quick_invoice({"opportunity_id": opportunity_id})
 
 
-def quick_invoice(opportunity_id):
+def quick_invoice(event, context=None):
     """ Function for performing a quick invoice end to end.
     Will create an invoice using the inbuilt RMS methods, post it to Xero and then clean the invoice for junk line items.
     Returns Xero Invoice uuid
     """
-    rms_invoice = rms_order.post_invoice(opportunity_id)
+    rms_invoice = rms_order.post_invoice(event["opportunity_id"])
     xero_invoice_number = rms_invoice.json()["invoice"]["number"]
     xero_invoice_uuid = xero_order.get_invoice_uuid(xero_invoice_number)
     xero_order.clean_invoice(xero_invoice_uuid)
     logging.info(
-        f"Opportunity {opportunity_id} has been clean invoiced {xero_invoice_number}"
+        f"Opportunity {event['opportunity_id']} has been clean invoiced {xero_invoice_number}"
     )
-    return xero_invoice_uuid
+    return {"statusCode": 200, "body": {"xero_invoice_uuid": xero_invoice_uuid}}
 
 
 def batch_quick_invoice(*args):
