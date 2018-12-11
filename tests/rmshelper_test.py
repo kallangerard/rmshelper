@@ -49,6 +49,7 @@ class TestRMSHelper(unittest.TestCase):
     logging.basicConfig(level=logging.INFO)
 
     def test_get_xero_invoice_uuid(self):
+        """Tests that Xero invoice uuid can be retrieved from INV- number"""
         invoice_number = os.environ.get("TEST_XERO_INVOICE_NUMBER")
         logging.debug(f"Xero Invoice Number: {invoice_number}")
         test_invoice_uuid = os.environ.get("TEST_XERO_INVOICE_UUID")
