@@ -1,5 +1,6 @@
 service: rmshelper
-
+plugins:
+  - serverless.dotenv.plugin
 
 provider:
   name: aws
@@ -40,8 +41,8 @@ functions:
     handler: rmshelper/rmshelper.quick_invoice
     events:
       - http:
-        path: rms/quick_invoice
-        method: get
+          path: rms/quick_invoice
+          method: get
 #      - s3: ${env:BUCKET}
 #      - schedule: rate(10 minutes)
 #      - sns: greeter-topic
