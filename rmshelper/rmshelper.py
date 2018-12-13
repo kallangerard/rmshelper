@@ -75,6 +75,12 @@ def batch_invoice(view_id):
             quick_invoice({"opportunity_id": opportunity_id})
 
 
+def global_check_in(event, context=None):
+    asset_number = event["asset_number"]
+    asset = rms_order.get_stock_levels(params={"q[asset_number_eq]": asset_number})
+    print(json.dumps(asset, indent=2))
+
+
 def quick_invoice(event, context=None):
     """ Function for performing a quick invoice end to end.
     Will create an invoice using the inbuilt RMS methods, post it to Xero and then clean the invoice for junk line items.
