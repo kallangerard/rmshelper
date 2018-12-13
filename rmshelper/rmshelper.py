@@ -60,19 +60,33 @@ class XeroRMS:
 def batch_invoice(view_id):
     # pylint: disable=E1101
     # TODO: Add function to deal with pages
-    orders = rms_order.get_opportunities(params={"view_id": view_id})
-    for order in orders["opportunities"]:
-        opportunity_id = order["id"]
-        if order["custom_fields"]["disable_auto_invoice"] == "Yes":
-            print(f"Skipping Opportunity {opportunity_id}")
-            continue
-        if order["charge_including_tax_total"] == "0.0":
-            print(f"Marking $0 Opportunity {opportunity_id} as Invoiced")
-            toggle_opportunity_invoiced_status(opportunity_id, override=True)
-            continue
-        else:
-            print(f"Invoicing Opportunity {opportunity_id}")
-            quick_invoice({"opportunity_id": opportunity_id})
+    page = 1
+
+    def _get_orders():
+        """ Gets list of invoiceable orders """
+        return rms_order.get_opportunities(
+            params={"view_id": view_id, "per_page": 50, "page": page}
+        )
+
+    # Gets orders and filters for invoices set to automatically invoice
+    # Until no more invoices remain
+    while True:
+        orders = _get_orders()
+        filtered_orders = [
+            order
+            for order in orders["opportunities"]
+            if order["custom_fields"]["disable_auto_invoice"] == "No"
+        ]
+        if len(filtered_orders) == 0:
+            break
+        for order in filtered_orders:
+            opportunity_id = order["id"]
+            if order["charge_including_tax_total"] == "0.0":
+                toggle_opportunity_invoiced_status(opportunity_id, override=True)
+                continue
+            else:
+                logging.info(f"Invoicing Opportunity {opportunity_id}")
+                quick_invoice({"opportunity_id": opportunity_id})
 
 
 def global_check_in(event, context=None):
