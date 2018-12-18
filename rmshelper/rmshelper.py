@@ -20,6 +20,24 @@ class XeroRMS:
         self.xero = Xero(credentials)
 
     def get_invoice_uuid(self, invoice_number):
+        """Retrieves the Xero invoice uuid when given an invoice number
+
+        Parameters
+        ----------
+        invoice_number : string
+            The invoice number of the Xero Invoice (eg "INV-1234")
+
+        Returns
+        -------
+        invoice_uuid : string
+            The uuid for the Xero Invoice (eg "243216c5-369e-4056-ac67-05388f86dc81")
+        
+        >>> invoice = XeroRMS()
+        >>> invoice_uuid = invoice.get_invoice_uuid("INV-1234")
+        >>> print(invoice_uuid)
+        "243216c5-369e-4056-ac67-05388f86dc81"
+        """
+
         # pylint: disable=E1101
         data = self.xero.invoices.filter(InvoiceNumber=invoice_number)
         logging.info(f"INVOICE OBJECT")
@@ -29,9 +47,11 @@ class XeroRMS:
 
     def clean_invoice(self, invoice_uuid, description_headers=None):
         """
-        Will clean invoice using uuid provided and save in place a neat copy.
+        Will clean invoice using uuid provided and save in place a neat copy
+
         Removes any items that do not have a UnitAmount or UnitAmount == 0
         """
+
         # pylint: disable=E1101
         data = self.xero.invoices.get(invoice_uuid)
         line_items = data[0]["LineItems"]
@@ -58,12 +78,17 @@ class XeroRMS:
 
 
 def batch_invoice(view_id):
-    # pylint: disable=E1101
-    # TODO: Add function to deal with pages
+    """Performs quick_invoice on a view_id of opportunities
+
+    >>> batch_invoice(10001)
+    """
+
     page = 1
 
     def _get_orders():
-        """ Gets list of invoiceable orders """
+        """Gets list of invoiceable orders """
+
+        # pylint: disable=E1101
         return rms_order.get_opportunities(
             params={"view_id": view_id, "per_page": 50, "page": page}
         )
@@ -90,16 +115,25 @@ def batch_invoice(view_id):
 
 
 def global_check_in(event, context=None):
+    """Retreives a stock level object when given an asset_id (barcode)
+
+    >>> global_check_in("12345")
+    # TODO: Check in all booked out instances of given stock level
+    """
+
     asset_number = event["asset_number"]
+    # pylint: disable=E1101
     asset = rms_order.get_stock_levels(params={"q[asset_number_eq]": asset_number})
     print(json.dumps(asset, indent=2))
 
 
 def quick_invoice(event, context=None):
-    """ Function for performing a quick invoice end to end.
+    """Function for performing a quick invoice end to end
+
     Will create an invoice using the inbuilt RMS methods, post it to Xero and then clean the invoice for junk line items.
     Returns Xero Invoice uuid
     """
+
     rms_invoice = rms_order.post_invoice(event["opportunity_id"])
     xero_invoice_number = rms_invoice.json()["invoice"]["number"]
     xero_invoice_uuid = xero_order.get_invoice_uuid(xero_invoice_number)
@@ -111,6 +145,11 @@ def quick_invoice(event, context=None):
 
 
 def batch_quick_invoice(*args):
+    """Will perform a quick invoice on any number of opportunity_id's
+
+    >>> batch_quick_invoice(12, 13, 15)
+    """
+
     for order in args:
         try:
             quick_invoice(order)
@@ -119,6 +158,26 @@ def batch_quick_invoice(*args):
 
 
 def toggle_opportunity_invoiced_status(opportunity_id, override=None):
+    """Toggles the invoiced status of an opportunity
+
+    
+    >>> toggle_opportunity_invoiced_status(opportunity_id = 123)
+    
+    Parameters
+    ----------
+    opportunity_id : int
+        The opportunity id
+    override : boolean, optional
+        Forces the status instead of toggling
+
+    Methods
+    -------
+    toggle_opportunity_invoiced_status(opportunity_id, override= True)
+        Forces invoiced_status to True
+    toggle_opportunity_invoiced_status(opportunity_id, override= False) 
+        Forces invoiced_status to False 
+    """
+
     # pylint: disable=E1101
     opportunity = rms_order.get_opportunity(id=opportunity_id)
     if override == None:
