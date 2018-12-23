@@ -1,6 +1,6 @@
 service: rmshelper
 plugins:
-  - serverless.dotenv.plugin
+  - serverless-dotenv-plugin
 
 provider:
   name: aws
