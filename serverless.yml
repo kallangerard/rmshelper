@@ -1,14 +1,17 @@
 service: rmshelper
 plugins:
   - serverless-dotenv-plugin
-
+  - serverless-python-requirements
 provider:
   name: aws
   runtime: python3.6
-#  stage: dev
-  region: ap-southeast-2 # Sydney
+  stage: ${env:STAGE}
+  region: ${env:AWS_REGION_NAME}
 
-# you can add statements to the Lambda function's IAM Role here
+custom:
+  pythonRequirements:
+    dockerizePip: non-linux
+  # you can add statements to the Lambda function's IAM Role here
 #  iamRoleStatements:
 #    - Effect: "Allow"
 #      Action:
