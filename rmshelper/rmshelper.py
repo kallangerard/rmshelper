@@ -127,21 +127,25 @@ def global_check_in(event, context=None):
     print(json.dumps(asset, indent=2))
 
 
-def quick_invoice(event, context=None):
+def quick_invoice(opportunity_id):
     """Function for performing a quick invoice end to end
 
     Will create an invoice using the inbuilt RMS methods, post it to Xero and then clean the invoice for junk line items.
-    Returns Xero Invoice uuid
+    Returns dictonary of post_invoice_status_code, xero_invoice_number and xero_invoice_uuid
     """
 
-    rms_invoice = rms_order.post_invoice(event["opportunity_id"])
+    rms_invoice = rms_order.post_invoice(opportunity_id)
     xero_invoice_number = rms_invoice.json()["invoice"]["number"]
     xero_invoice_uuid = xero_order.get_invoice_uuid(xero_invoice_number)
     xero_order.clean_invoice(xero_invoice_uuid)
     logging.info(
-        f"Opportunity {event['opportunity_id']} has been clean invoiced {xero_invoice_number}"
+        f"Opportunity {opportunity_id} has been clean invoiced {xero_invoice_number}"
     )
-    return {"statusCode": 200, "body": {"xero_invoice_uuid": xero_invoice_uuid}}
+    return {
+        "post_invoice_status_code": rms_invoice.invoice.status_code,
+        "xero_invoice_number": xero_invoice_number,
+        "xero_invoice_uuid": xero_invoice_uuid,
+    }
 
 
 def batch_quick_invoice(*args):
@@ -207,6 +211,4 @@ rms_token = rmshelper_secret.get("RMS_TOKEN")
 
 xero_order = XeroRMS(xero_consumer_key, xero_private_key)
 rms_order = RMSManager(rms_subdomain, rms_token)
-
-rms_invoicable_id = os.environ.get("RMS_INVOICABLE_ID")
 
