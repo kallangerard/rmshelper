@@ -11,6 +11,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 from rmshelper.rms import RMSManager
 from rmshelper.secretmanager import get_secret
 import rmshelper.rmshelper as rmshelper
+import handler
 
 
 class TestAuthentication(unittest.TestCase):
@@ -75,6 +76,13 @@ class TestSecretManager(unittest.TestCase):
         lines = secret.splitlines()
         begin_rsa = "-----BEGIN RSA PRIVATE KEY-----"
         self.assertEqual(lines[0], begin_rsa)
+
+
+class TestHandler(unittest.TestCase):
+    def test_quick_invoice(self):
+        """Testing Quick Invoice for rmshelper"""
+        # TODO: Setup and Teardown test invoice for handler.quick_invoice()
+        pass
 
 
 if __name__ == "__main__":
