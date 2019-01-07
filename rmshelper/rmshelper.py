@@ -142,7 +142,7 @@ def quick_invoice(opportunity_id):
         f"Opportunity {opportunity_id} has been clean invoiced {xero_invoice_number}"
     )
     return {
-        "post_invoice_status_code": rms_invoice.invoice.status_code,
+        "post_invoice_status_code": rms_invoice.status_code,
         "xero_invoice_number": xero_invoice_number,
         "xero_invoice_uuid": xero_invoice_uuid,
     }
