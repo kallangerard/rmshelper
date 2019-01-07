@@ -14,10 +14,9 @@ custom:
 
 package:
   include:
-   - handler.py 
-   - rmshelper/**
+    - handler.py 
   exclude:
-   - ./**
+    - ./**
 
 functions:
   rmshelper:
