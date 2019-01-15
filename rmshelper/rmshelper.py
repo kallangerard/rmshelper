@@ -111,7 +111,7 @@ def batch_invoice(view_id):
                 continue
             else:
                 logging.info(f"Invoicing Opportunity {opportunity_id}")
-                quick_invoice({"opportunity_id": opportunity_id})
+                quick_invoice(opportunity_id)
 
 
 def global_check_in(event, context=None):
