@@ -114,7 +114,7 @@ def batch_invoice(view_id):
                 quick_invoice(opportunity_id)
 
 
-def global_check_in(event, context=None):
+def global_check_in(event):
     """Retreives a stock level object when given an asset_id (barcode)
 
     >>> global_check_in("12345")
