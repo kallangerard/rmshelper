@@ -6,6 +6,7 @@ import json
 class RMSManager:
     """Handler for Current RMS APIv1"""
 
+    # Requests handles URI parameters with {params}
     BASE_URL = "https://api.current-rms.com/api/v1"
     GET_DICTIONARY = {
         "invoice": "/invoices/{id}",
@@ -21,6 +22,8 @@ class RMSManager:
         "opportunity_convert_to_quote": "/opportunities/{id}/convert_to_quote",
         "opportunity_convert_to_order": "/opportunities/{id}/convert_to_order",
         "opportunity_revert_to_quote": "/opportunities/{id}/revert_to_quote",
+        "product": "/products/{id}",
+        "products": "/products",
         "stock_levels": "/stock_levels",
     }
     PUT_DICTIONARY = {"opportunity": "/opportunities/{id}"}

@@ -9,8 +9,8 @@ from xero.exceptions import XeroNotFound
 from datetime import datetime
 from dateutil.parser import parse
 
-from rmshelper.rms import RMSManager
-from rmshelper.secretmanager import get_secret
+from .rms import RMSManager
+from .secretmanager import get_secret
 
 
 class XeroRMS:
@@ -77,36 +77,29 @@ class XeroRMS:
             print("Invoice already clean")
 
 
-def batch_invoice(view_id):
-    """Performs quick_invoice on a view_id of opportunities
+def batch_invoice(*args):
+    """Performs quick_invoice on a list of opportunities
 
-    >>> batch_invoice(10001)
+    >>> batch_invoice("1234", "3456")
     """
+    # def _get_orders():
+    #     """Gets list of invoiceable orders """
 
-    page = 1
-
-    def _get_orders():
-        """Gets list of invoiceable orders """
-
-        # pylint: disable=E1101
-        return rms_order.get_opportunities(
-            params={"view_id": view_id, "per_page": 50, "page": page}
-        )
+    #     # pylint: disable=E1101
+    #     return r.get_opportunities(
+    #         params={"view_id": view_id, "per_page": 50, "page": page}
+    #     )
 
     # Gets orders and filters for invoices set to automatically invoice
     # Until no more invoices remain
+    orders = args
     while True:
-        orders = _get_orders()
-        filtered_orders = [
-            order
-            for order in orders["opportunities"]
-            if order["custom_fields"]["disable_auto_invoice"] == "No"
-        ]
-        if len(filtered_orders) == 0:
+        if len(orders) == 0:
             break
-        for order in filtered_orders:
-            opportunity_id = order["id"]
-            if order["charge_including_tax_total"] == "0.0":
+        for opportunity_id in orders:
+            # pylint: disable=E1101
+            payload = r.get_opportunity(str(opportunity_id))
+            if payload["opportunity"]["charge_including_tax_total"] == "0.0":
                 toggle_opportunity_invoiced_status(opportunity_id, override=True)
                 continue
             else:
@@ -123,7 +116,7 @@ def global_check_in(event):
 
     asset_number = event["asset_number"]
     # pylint: disable=E1101
-    asset = rms_order.get_stock_levels(params={"q[asset_number_eq]": asset_number})
+    asset = r.get_stock_levels(params={"q[asset_number_eq]": asset_number})
     print(json.dumps(asset, indent=2))
 
 
@@ -134,10 +127,10 @@ def quick_invoice(opportunity_id):
     Returns dictonary of post_invoice_status_code, xero_invoice_number and xero_invoice_uuid
     """
 
-    rms_invoice = rms_order.post_invoice(opportunity_id)
+    rms_invoice = r.post_invoice(opportunity_id)
     xero_invoice_number = rms_invoice.json()["invoice"]["number"]
-    xero_invoice_uuid = xero_order.get_invoice_uuid(xero_invoice_number)
-    xero_order.clean_invoice(xero_invoice_uuid)
+    xero_invoice_uuid = x.get_invoice_uuid(xero_invoice_number)
+    x.clean_invoice(xero_invoice_uuid)
     logging.info(
         f"Opportunity {opportunity_id} has been clean invoiced {xero_invoice_number}"
     )
@@ -156,9 +149,9 @@ def batch_quick_invoice(*args):
 
     for order in args:
         try:
-            quick_invoice(order)
+            quick_invoice(str(order))
         except:
-            logging.info("Failed to process Order {order}")
+            logging.info(f"Failed to process Order {order}")
 
 
 def toggle_opportunity_invoiced_status(opportunity_id, override=None):
@@ -183,32 +176,25 @@ def toggle_opportunity_invoiced_status(opportunity_id, override=None):
     """
 
     # pylint: disable=E1101
-    opportunity = rms_order.get_opportunity(id=opportunity_id)
+    opportunity = r.get_opportunity(id=opportunity_id)
     if override == None:
         x = opportunity["opportunity"]["invoiced"]
         opportunity["opportunity"]["invoiced"] = not x
     if override == True or False:
         opportunity["opportunity"]["invoiced"] = override
     # pylint: disable=E1101
-    opportunity = rms_order.put_opportunity(opportunity_id, opportunity)
+    opportunity = r.put_opportunity(opportunity_id, opportunity)
     return opportunity
 
 
-# logging.basicConfig(level=logging.DEBUG)
 region_name = os.environ.get("AWS_REGION_NAME")
-logging.debug(f"Region Name: {region_name}")
-xero_secret_name = os.environ.get("STAGE") + "/xero"
-logging.debug(f"xero_secret_name: {xero_secret_name}")
-rmshelper_secret_name = os.environ.get("STAGE") + "/rmshelper"
-logging.debug(f"rmshelper_secret_name: {rmshelper_secret_name}")
-rmshelper_secret = json.loads(get_secret(rmshelper_secret_name, region_name))
 
-xero_consumer_key = rmshelper_secret.get("XERO_CONSUMER_KEY")
-xero_private_key = get_secret(xero_secret_name, region_name)
-
-rms_subdomain = rmshelper_secret.get("SUBDOMAIN")
-rms_token = rmshelper_secret.get("RMS_TOKEN")
-
-xero_order = XeroRMS(xero_consumer_key, xero_private_key)
-rms_order = RMSManager(rms_subdomain, rms_token)
+rmshelper_secret = json.loads(
+    get_secret(f"{os.environ.get('STAGE')}/rmshelper", region_name)
+)
+r = RMSManager(rmshelper_secret.get("SUBDOMAIN"), rmshelper_secret.get("RMS_TOKEN"))
+x = XeroRMS(
+    rmshelper_secret.get("XERO_CONSUMER_KEY"),
+    get_secret(f"{os.environ.get('STAGE')}/xero", region_name),
+)
 

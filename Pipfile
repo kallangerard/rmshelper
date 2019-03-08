@@ -10,7 +10,7 @@ calc = "*"
 pyxero = "*"
 requests = "*"
 "python-oauth2" = "*"
-pyyaml = ">=4.2b1"
+pyyaml = "*"
 
 [dev-packages]
 black = "*"
