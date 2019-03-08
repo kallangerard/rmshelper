@@ -12,5 +12,5 @@ if __name__ == "__main__":
     while True:
         invoice_id = input("Enter Invoice ID: ")
         if invoice_id == None:
-            Break
+            break
         quick_invoice(invoice_id, None)
