@@ -13,4 +13,6 @@ if __name__ == "__main__":
         invoice_id = input("Enter Invoice ID: ")
         if invoice_id == None:
             break
-        quick_invoice(invoice_id, None)
+        event = {"opportunity_id": str(invoice_id)}
+        quick_invoice(event, None)
+        
