@@ -10,11 +10,7 @@ def quick_invoice(event, context):
 
 if __name__ == "__main__":
     while True:
-        opportunity_id = input("Enter Opportunity Number: ")
-        if opportunity_id == "":
+        invoice_id = input("Enter Invoice ID: ")
+        if invoice_id == None:
             break
-        # try:
-        quick_invoice(str(opportunity_id), context=None)
-        # except:
-        # print(f"Could not invoice opportunity # {opportunity_id}")
-
+        quick_invoice(invoice_id, None)
