@@ -11,6 +11,7 @@ pyxero = "*"
 requests = "*"
 "python-oauth2" = "*"
 pyyaml = "*"
+flask = "*"
 
 [dev-packages]
 black = "*"
