@@ -12,6 +12,7 @@ requests = "*"
 "python-oauth2" = "*"
 pyyaml = "*"
 flask = "*"
+zappa = "*"
 
 [dev-packages]
 black = "*"

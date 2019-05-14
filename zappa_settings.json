@@ -1,0 +1,12 @@
+{
+  "dev": {
+    "app_function": "api.api",
+    "aws_region": "ap-southeast-2",
+    "profile_name": "default",
+    "project_name": "rmshelper",
+    "runtime": "python3.6",
+    "s3_bucket": "zappa-18zyskyi4",
+    "api_key_required": true,
+    "keep_warm": false
+  }
+}
