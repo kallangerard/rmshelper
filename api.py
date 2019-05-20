@@ -11,7 +11,3 @@ def quick_invoice(opportunity_id):
     invoice = rmshelper.quick_invoice(opportunity_id)
     if invoice["post_invoice_status_code"] == 200:
         return jsonify(invoice), 200
-
-
-if __name__ == "__main__":
-    api.run(debug=True)
