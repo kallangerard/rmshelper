@@ -7,6 +7,15 @@ provider:
   runtime: python3.6
   stage: ${env:STAGE}
   region: ${env:AWS_REGION_NAME}
+  apiKeys:
+    - ${env:STAGE}-InternalAccess
+  usagePlan:
+    quota:
+      limit: 3000
+      period: MONTH
+    throttle:
+      burstlimit: 200
+      ratelimit: 100s
 
 custom:
   pythonRequirements:
@@ -14,14 +23,16 @@ custom:
 
 package:
   include:
-    - handler.py 
+    - handler.py
+    - rmshelper/**
   exclude:
     - ./**
 
 functions:
-  rmshelper:
+  quick_invoice:
     handler: handler.quick_invoice
     events:
       - http:
-          path: rms/quick_invoice
+          path: rms/quick_invoice/{opportunity_id}
           method: get
+          private: true
