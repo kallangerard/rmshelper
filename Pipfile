@@ -4,16 +4,15 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-"boto3" = "*"
-awscli = "*"
-calc = "*"
+boto3 = "*"
 pyxero = "*"
 requests = "*"
-"python-oauth2" = "*"
-pyyaml = "*"
 
 [dev-packages]
+awscli = "*"
 black = "*"
+chalice = "*"
+pipenv_to_requirements = "*"
 pylint = "*"
 rope = "*"
 

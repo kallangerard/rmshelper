@@ -113,3 +113,7 @@ local_test.py
 # node
 node_modules/
 .vscode/launch.json
+
+# chalice
+.chalice/deployments/
+.chalice/venv/
