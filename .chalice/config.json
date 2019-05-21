@@ -1,0 +1,14 @@
+{
+  "version": "2.0",
+  "app_name": "rmshelper",
+  "stages": {
+    "dev": {
+      "api_gateway_stage": "dev",
+      "autogen_policy": false,
+      "environmental_variables": {
+        "AWS_REGION_NAME": "ap-southeast-2",
+        "STAGE": "dev"
+      }
+    }
+  }
+}
