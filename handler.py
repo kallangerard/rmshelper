@@ -9,10 +9,10 @@ def quick_invoice(event, context):
 
 
 if __name__ == "__main__":
-    while True:
-        invoice_id = input("Enter Invoice ID: ")
-        if invoice_id == None:
-            break
-        event = {"opportunity_id": str(invoice_id)}
-        quick_invoice(event, None)
-        
+    print("Helloworld!")
+    # while True:
+    #     invoice_id = input("Enter Invoice ID: ")
+    #     if invoice_id == None:
+    #         break
+    #     event = {"opportunity_id": str(invoice_id)}
+    #     quick_invoice(event, None)
