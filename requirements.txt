@@ -1,0 +1,5 @@
+calc
+python-oauth2
+pyxero
+pyyaml
+requests

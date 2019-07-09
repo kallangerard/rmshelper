@@ -187,7 +187,7 @@ def toggle_opportunity_invoiced_status(opportunity_id, override=None):
     return opportunity
 
 
-region_name = os.environ.get("AWS_REGION_NAME")
+region_name = os.environ.get("AWS_DEFAULT_REGION")
 
 rmshelper_secret = json.loads(
     get_secret(f"{os.environ.get('STAGE')}/rmshelper", region_name)
