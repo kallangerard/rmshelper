@@ -8,4 +8,4 @@ COPY ./rmshelper ./rmshelper/
 COPY handler.py .
 WORKDIR /app
 
-CMD [ "python", "./handler.py"]
+CMD ["python"]

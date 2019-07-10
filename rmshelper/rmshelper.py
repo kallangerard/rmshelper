@@ -120,7 +120,7 @@ def global_check_in(event):
     print(json.dumps(asset, indent=2))
 
 
-def quick_invoice(opportunity_id):
+def quick_invoice(opportunity_id, r, x):
     """Function for performing a quick invoice end to end
 
     Will create an invoice using the inbuilt RMS methods, post it to Xero and then clean the invoice for junk line items.
@@ -187,14 +187,11 @@ def toggle_opportunity_invoiced_status(opportunity_id, override=None):
     return opportunity
 
 
-region_name = os.environ.get("AWS_DEFAULT_REGION")
 
-rmshelper_secret = json.loads(
-    get_secret(f"{os.environ.get('STAGE')}/rmshelper", region_name)
-)
-r = RMSManager(rmshelper_secret.get("SUBDOMAIN"), rmshelper_secret.get("RMS_TOKEN"))
-x = XeroRMS(
-    rmshelper_secret.get("XERO_CONSUMER_KEY"),
-    get_secret(f"{os.environ.get('STAGE')}/xero", region_name),
-)
+# logging.debug(rmshelper_secret)
+# r = RMSManager(rmshelper_secret.get("SUBDOMAIN"), rmshelper_secret.get("RMS_TOKEN"))
+# x = XeroRMS(
+#     rmshelper_secret.get("XERO_CONSUMER_KEY"),
+#     get_secret(f"{os.environ.get('STAGE')}/xero", region_name),
+# )
 
