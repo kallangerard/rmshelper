@@ -1,4 +1,7 @@
+awscli
+boto3
 calc
+flask
 python-oauth2
 pyxero
 pyyaml

@@ -6,9 +6,12 @@ services:
   rmshelper:
     container_name: rmshelper
     build: .
+    ports:
+      - 5000:5000
     environment:
       AWS_ACCESS_KEY_ID:
       AWS_SECRET_ACCESS_KEY:
       AWS_DEFAULT_REGION:
       STAGE:
-    command: ["python", "handler.py"]
+      FLASK_APP: api.py
+    command: ["flask", "run", "--host=0.0.0.0"]

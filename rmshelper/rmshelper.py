@@ -185,13 +185,3 @@ def toggle_opportunity_invoiced_status(opportunity_id, override=None):
     # pylint: disable=E1101
     opportunity = r.put_opportunity(opportunity_id, opportunity)
     return opportunity
-
-
-
-# logging.debug(rmshelper_secret)
-# r = RMSManager(rmshelper_secret.get("SUBDOMAIN"), rmshelper_secret.get("RMS_TOKEN"))
-# x = XeroRMS(
-#     rmshelper_secret.get("XERO_CONSUMER_KEY"),
-#     get_secret(f"{os.environ.get('STAGE')}/xero", region_name),
-# )
-
