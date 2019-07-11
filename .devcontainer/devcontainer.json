@@ -1,7 +1,7 @@
 {
   "name": "rmshelper",
   "dockerFile": "Dockerfile",
-  "appPort": 9000,
+  "appPort": "9000:9000",
   "context": "..",
   "extensions": [
     "ms-python.python"

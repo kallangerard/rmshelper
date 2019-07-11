@@ -4,9 +4,15 @@ import logging
 import json
 
 from flask import Flask
+from flask import request
+from flask_restplus import Resource
+from flask_restplus import Api
 
 from rmshelper import rmshelper
 
+
+app = Flask(__name__)
+api = Api(app)
 
 STAGE = os.environ.get("STAGE")
 
@@ -26,18 +32,25 @@ xero_consumer_key = rmshelper_secret.get("XERO_CONSUMER_KEY")
 xero_private_key = rmshelper.get_secret(xero_secret_name, region_name)
 x = rmshelper.XeroRMS(xero_consumer_key, xero_private_key)
 
-app = Flask(__name__)
-app.config["DEBUG"] = True
+
+@api.route("/opportunities/<int:opportunity_id>/quick_invoice")
+class QuickInvoice(Resource):
+    def post(self, opportunity_id):
+        # opportunity_id = request.get_json()["opportunity_id"]
+        invoice = rmshelper.quick_invoice(opportunity_id, r, x)
+        return {
+            "opportunity_id": opportunity_id,
+            "invoice_number": invoice["xero_invoice_number"],
+            "status_code": invoice["post_invoice_status_code"],
+        }
 
 
-@app.route("/quick_invoice/<int:opportunity_id>", methods=["GET"])
-def quick_invoice(opportunity_id):
-    invoice = rmshelper.quick_invoice(opportunity_id, r, x)
-    if invoice["post_invoice_status_code"] == 200:
-        return f"Invoiced {invoice['xero_invoice_number']}, {invoice['post_invoice_status_code']}"
-    # TODO: Raise exceptions
+@api.route("/test_xero_api")
+class XeroApi(Resource):
+    def get(self):
+        return dir(x.manual_credentials.oauth)
 
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)
-    app.run()
+    app.run(debug=True)

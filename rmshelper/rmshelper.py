@@ -16,8 +16,13 @@ from .secretmanager import get_secret
 class XeroRMS:
     def __init__(self, xero_consumer_key, xero_private_key):
 
-        credentials = PrivateCredentials(xero_consumer_key, xero_private_key)
-        self.xero = Xero(credentials)
+        self.credentials = PrivateCredentials(xero_consumer_key, xero_private_key)
+        # self.manual_credentials = credentials
+        self.xero = Xero(self.credentials)
+
+    def test_xero_api(self):
+        pass
+        # return self.manual_credentials
 
     def get_invoice_uuid(self, invoice_number):
         """Retrieves the Xero invoice uuid when given an invoice number
@@ -77,47 +82,16 @@ class XeroRMS:
             print("Invoice already clean")
 
 
-def batch_invoice(*args):
-    """Performs quick_invoice on a list of opportunities
-
-    >>> batch_invoice("1234", "3456")
-    """
-    # def _get_orders():
-    #     """Gets list of invoiceable orders """
-
-    #     # pylint: disable=E1101
-    #     return r.get_opportunities(
-    #         params={"view_id": view_id, "per_page": 50, "page": page}
-    #     )
-
-    # Gets orders and filters for invoices set to automatically invoice
-    # Until no more invoices remain
-    orders = args
-    while True:
-        if len(orders) == 0:
-            break
-        for opportunity_id in orders:
-            # pylint: disable=E1101
-            payload = r.get_opportunity(str(opportunity_id))
-            if payload["opportunity"]["charge_including_tax_total"] == "0.0":
-                toggle_opportunity_invoiced_status(opportunity_id, override=True)
-                continue
-            else:
-                logging.info(f"Invoicing Opportunity {opportunity_id}")
-                quick_invoice(opportunity_id)
-
-
-def global_check_in(event):
+def global_check_in(event, r):
     """Retreives a stock level object when given an asset_id (barcode)
 
     >>> global_check_in("12345")
     # TODO: Check in all booked out instances of given stock level
     """
 
-    asset_number = event["asset_number"]
+    # asset_number = event["asset_number"]
     # pylint: disable=E1101
-    asset = r.get_stock_levels(params={"q[asset_number_eq]": asset_number})
-    print(json.dumps(asset, indent=2))
+    # asset = r.get_stock_levels(params={"q[asset_number_eq]": asset_number})
 
 
 def quick_invoice(opportunity_id, r, x):
@@ -141,20 +115,19 @@ def quick_invoice(opportunity_id, r, x):
     }
 
 
-def batch_quick_invoice(*args):
-    """Will perform a quick invoice on any number of opportunity_id's
+def void_invoice(opportunity_id, r, x):
+    # Current API Does not allow listing invoices for opportunity!
+    # Get invoices for opportunity
+    # For those invoices, void each one
+    # Return statuses
+    #         "opportunity_id": opportunity_id,
+    #         "invoice_number": invoice["xero_invoice_number"],
+    #         "invoice_status": invoice["invoice_status"]
+    #         "status_code": invoice["post_invoice_status_code"],
+    pass
 
-    >>> batch_quick_invoice(12, 13, 15)
-    """
 
-    for order in args:
-        try:
-            quick_invoice(str(order))
-        except:
-            logging.info(f"Failed to process Order {order}")
-
-
-def toggle_opportunity_invoiced_status(opportunity_id, override=None):
+def toggle_opportunity_invoiced_status(opportunity_id, r, x, override=None):
     """Toggles the invoiced status of an opportunity
 
     

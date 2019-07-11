@@ -2,6 +2,7 @@ awscli
 boto3
 calc
 flask
+flask-restplus
 python-oauth2
 pyxero
 pyyaml
