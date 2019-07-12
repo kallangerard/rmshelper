@@ -1,15 +1,12 @@
+import json
+import logging
 import os
 import sys
-import logging
-import json
 
-from flask import Flask
-from flask import request
-from flask_restplus import Resource
-from flask_restplus import Api
+from flask import Flask, request
+from flask_restplus import Api, Resource
 
 from rmshelper import rmshelper
-
 
 app = Flask(__name__)
 api = Api(app)
@@ -36,7 +33,6 @@ x = rmshelper.XeroRMS(xero_consumer_key, xero_private_key)
 @api.route("/opportunities/<int:opportunity_id>/quick_invoice")
 class QuickInvoice(Resource):
     def post(self, opportunity_id):
-        # opportunity_id = request.get_json()["opportunity_id"]
         invoice = rmshelper.quick_invoice(opportunity_id, r, x)
         return {
             "opportunity_id": opportunity_id,
@@ -45,10 +41,11 @@ class QuickInvoice(Resource):
         }
 
 
-@api.route("/test_xero_api")
-class XeroApi(Resource):
-    def get(self):
-        return dir(x.manual_credentials.oauth)
+@api.route("/invoices/<xero_invoice_uuid>/Email")
+class EmailInvoice(Resource):
+    def post(self, xero_invoice_uuid):
+        email = x.email_invoice(xero_invoice_uuid)
+        return email.text
 
 
 if __name__ == "__main__":

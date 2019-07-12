@@ -1,13 +1,15 @@
-import requests
 import json
-import os
 import logging
+import os
+from datetime import datetime
 
+import requests
+from dateutil.parser import parse
+from oauthlib.oauth1 import SIGNATURE_HMAC, SIGNATURE_RSA, SIGNATURE_TYPE_AUTH_HEADER
+from requests_oauthlib import OAuth1
 from xero import Xero
 from xero.auth import PrivateCredentials
 from xero.exceptions import XeroNotFound
-from datetime import datetime
-from dateutil.parser import parse
 
 from .rms import RMSManager
 from .secretmanager import get_secret
@@ -17,12 +19,20 @@ class XeroRMS:
     def __init__(self, xero_consumer_key, xero_private_key):
 
         self.credentials = PrivateCredentials(xero_consumer_key, xero_private_key)
-        # self.manual_credentials = credentials
         self.xero = Xero(self.credentials)
 
-    def test_xero_api(self):
-        pass
-        # return self.manual_credentials
+    def email_invoice(self, xero_invoice_uuid):
+        oauth = OAuth1(
+            self.credentials.consumer_key,
+            resource_owner_key=self.credentials.oauth_token,
+            rsa_key=self.credentials.rsa_key,
+            signature_method=SIGNATURE_RSA,
+            signature_type=SIGNATURE_TYPE_AUTH_HEADER,
+        )
+        post_url = f"https://api.xero.com/api.xro/2.0/Invoices/{xero_invoice_uuid}/Email"
+        session = requests.Session()
+        session.auth = oauth
+        return session.post(post_url)
 
     def get_invoice_uuid(self, invoice_number):
         """Retrieves the Xero invoice uuid when given an invoice number
