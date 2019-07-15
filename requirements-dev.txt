@@ -1,3 +1,7 @@
+awscli
 black
+boto3
 pylint
 rope
+
+# Zappa must be installed in virtualenv

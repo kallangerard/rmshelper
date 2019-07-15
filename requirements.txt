@@ -1,5 +1,3 @@
-awscli
-boto3
 calc
 flask
 flask-restplus
