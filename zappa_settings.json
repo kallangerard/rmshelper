@@ -1,10 +1,10 @@
 {
     "dev": {
-        "api_key_required": "true",
+        "api_key_required": true,
         "app_function": "app.app",
         "aws_region": "ap-southeast-2",
-        "keep_warm": "false",
-        "profile_name": "default",
+        "keep_warm": false,
+        "profile_name": "zappa-admin",
         "project_name": "rmshelper",
         "runtime": "python3.7",
         "s3_bucket": "zappa-cr4ozv90l"

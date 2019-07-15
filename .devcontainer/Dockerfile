@@ -14,15 +14,21 @@ RUN apt-get autoremove -y \
   && rm -rf /var/lib/apt/lists/*
 ENV DEBIAN_FRONTEND=dialog
 
-RUN pip install virtualenv
-
-ENV VIRTUAL_ENV=/opt/venv
-RUN python -m virtualenv --python=/usr/bin/python3 $VIRTUAL_ENV
-
 RUN mkdir /workspace
 WORKDIR /workspace
 
-COPY requirements.txt /workspace/
-RUN pip install -r requirements.txt
-COPY requirements-dev.txt /workspace/
-RUN pip install -r requirements-dev.txt
+RUN pip install pipenv
+COPY Pipfile /workspace/
+
+RUN pipenv install --dev
+
+# ENTRYPOINT ["pipenv", "shell"]
+
+# ENV VIRTUAL_ENV=/opt/venv
+# RUN python -m virtualenv --python=/usr/bin/python3 $VIRTUAL_ENV
+
+
+# COPY requirements.txt /workspace/
+# RUN pip install -r requirements.txt
+# COPY requirements-dev.txt /workspace/
+# RUN pip install -r requirements-dev.txt
