@@ -18,9 +18,14 @@ RUN mkdir /workspace
 WORKDIR /workspace
 
 RUN pip install pipenv
+
+ENV PIPENV_SKIP_LOCK=false
+ENV PIPENV_VENV_IN_PROJECT=true
+ENV PIPENV_YES=true
+
 COPY Pipfile /workspace/
 
-RUN pipenv install --dev
+RUN pipenv install --dev --system
 
 # ENTRYPOINT ["pipenv", "shell"]
 

@@ -18,8 +18,11 @@ zappa = "*"
 
 [dev-packages]
 awscli = "*"
-# black = "*"
+black = "*"
 boto3 = "*"
 pylint = "*"
 rope = "*"
 zappa = "*"
+
+[pipenv]
+allow_prereleases = true

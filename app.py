@@ -12,9 +12,11 @@ app = Flask(__name__)
 api = Api(app)
 
 STAGE = os.environ.get("STAGE")
+logging.debug(f"Stage: {STAGE}")
 
 # Get RMS Secret
 region_name = os.environ.get("AWS_DEFAULT_REGION")
+logging.debug(f"Region: {region_name}")
 secret_name = f"{STAGE}/rmshelper"
 rmshelper_secret = json.loads(rmshelper.get_secret(secret_name, region_name))
 
