@@ -21,45 +21,6 @@ class XeroRMS:
         self.credentials = PrivateCredentials(xero_consumer_key, xero_private_key)
         self.xero = Xero(self.credentials)
 
-    def email_invoice(self, xero_invoice_uuid):
-        oauth = OAuth1(
-            self.credentials.consumer_key,
-            resource_owner_key=self.credentials.oauth_token,
-            rsa_key=self.credentials.rsa_key,
-            signature_method=SIGNATURE_RSA,
-            signature_type=SIGNATURE_TYPE_AUTH_HEADER,
-        )
-        post_url = f"https://api.xero.com/api.xro/2.0/Invoices/{xero_invoice_uuid}/Email"
-        session = requests.Session()
-        session.auth = oauth
-        return session.post(post_url)
-
-    def get_invoice_uuid(self, invoice_number):
-        """Retrieves the Xero invoice uuid when given an invoice number
-
-        Parameters
-        ----------
-        invoice_number : string
-            The invoice number of the Xero Invoice (eg "INV-1234")
-
-        Returns
-        -------
-        invoice_uuid : string
-            The uuid for the Xero Invoice (eg "243216c5-369e-4056-ac67-05388f86dc81")
-        
-        >>> invoice = XeroRMS()
-        >>> invoice_uuid = invoice.get_invoice_uuid("INV-1234")
-        >>> print(invoice_uuid)
-        "243216c5-369e-4056-ac67-05388f86dc81"
-        """
-
-        # pylint: disable=E1101
-        data = self.xero.invoices.filter(InvoiceNumber=invoice_number)
-        # logging.info(f"INVOICE OBJECT")
-        logging.info(data)
-        invoice_uuid = data[0]["InvoiceID"]
-        return invoice_uuid
-
     def clean_invoice(self, invoice_uuid, description_headers=None):
         """
         Will clean invoice using uuid provided and save in place a neat copy
@@ -90,6 +51,47 @@ class XeroRMS:
         # Otherwise do nothing.
         else:
             print("Invoice already clean")
+
+    def email_invoice(self, xero_invoice_uuid):
+        oauth = OAuth1(
+            self.credentials.consumer_key,
+            resource_owner_key=self.credentials.oauth_token,
+            rsa_key=self.credentials.rsa_key,
+            signature_method=SIGNATURE_RSA,
+            signature_type=SIGNATURE_TYPE_AUTH_HEADER,
+        )
+        post_url = (
+            f"https://api.xero.com/api.xro/2.0/Invoices/{xero_invoice_uuid}/Email"
+        )
+        session = requests.Session()
+        session.auth = oauth
+        return session.post(post_url)
+
+    def get_invoice_uuid(self, invoice_number):
+        """Retrieves the Xero invoice uuid when given an invoice number
+
+        Parameters
+        ----------
+        invoice_number : string
+            The invoice number of the Xero Invoice (eg "INV-1234")
+
+        Returns
+        -------
+        invoice_uuid : string
+            The uuid for the Xero Invoice (eg "243216c5-369e-4056-ac67-05388f86dc81")
+        
+        >>> invoice = XeroRMS()
+        >>> invoice_uuid = invoice.get_invoice_uuid("INV-1234")
+        >>> print(invoice_uuid)
+        "243216c5-369e-4056-ac67-05388f86dc81"
+        """
+
+        # pylint: disable=E1101
+        data = self.xero.invoices.filter(InvoiceNumber=invoice_number)
+        # logging.info(f"INVOICE OBJECT")
+        logging.info(data)
+        invoice_uuid = data[0]["InvoiceID"]
+        return invoice_uuid
 
 
 def global_check_in(event, r):
