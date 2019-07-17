@@ -112,3 +112,4 @@ local_test.py
 
 # node
 node_modules/
+rmshelper-*-template-*.json
