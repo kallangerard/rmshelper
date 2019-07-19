@@ -94,14 +94,14 @@ class XeroRMS:
         return invoice_uuid
 
 
-def global_check_in(event, r):
-    """Retreives a stock level object when given an asset_id (barcode)
+def global_check_in(asset_id, r):
+    """
+    Retreives a stock level object when given an asset_id (barcode)
+    >>> global_check_in("12345", r)
 
-    >>> global_check_in("12345")
-    # TODO: Check in all booked out instances of given stock level
+    TODO: Check in all booked out instances of given stock level
     """
 
-    # asset_number = event["asset_number"]
     # pylint: disable=E1101
     # asset = r.get_stock_levels(params={"q[asset_number_eq]": asset_number})
 

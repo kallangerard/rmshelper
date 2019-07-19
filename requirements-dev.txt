@@ -2,5 +2,6 @@ awscli
 black
 boto3
 pylint
+pytest
 rope
 zappa
