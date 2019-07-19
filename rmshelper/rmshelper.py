@@ -100,10 +100,37 @@ def global_check_in(asset_id, r):
     >>> global_check_in("12345", r)
 
     TODO: Check in all booked out instances of given stock level
+    TODO: Return item name with response
     """
 
-    # pylint: disable=E1101
-    # asset = r.get_stock_levels(params={"q[asset_number_eq]": asset_number})
+    response_body = r.get_opportunities(
+        params={
+            "q[g][0][opportunity_items_item_assets_stock_level_asset_number_eq]": asset_id,
+            "q[g][0][opportunity_items_item_assets_status_eq]": "20",
+            "q[m]": "and",
+            "include[]": "item_assets",
+        }
+    )
+
+    opportunity_numbers = [i.get("id") for i in response_body.get("opportunities")]
+    # first_opportunity_items = response_body["opportunitities"][0]["opportunity_items"]
+    # item_name: [i.get("name") for i in first_opportunity_items if i["item_assets"][]]
+
+    opportunities_checked_in = []
+    for opportunity in opportunity_numbers:
+        try:
+            r.post_opportunities_quick_check_in(
+                opportunity, json={"stock_level_asset_number": asset_id}
+            )
+            opportunities_checked_in.append(opportunity)
+        except:
+            logging.debug(f"Failed to Check in {asset_id} in opportunity {opportunity}")
+
+    response = {
+        "opportunity_numbers": opportunity_numbers,
+        "checked_in": opportunities_checked_in,
+    }
+    return response
 
 
 def quick_invoice(opportunity_id, r, x):

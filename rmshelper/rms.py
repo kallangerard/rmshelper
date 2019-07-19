@@ -8,6 +8,7 @@ class RMSManager:
 
     # Requests handles URI parameters with {params}
     BASE_URL = "https://api.current-rms.com/api/v1"
+
     GET_DICTIONARY = {
         "invoice": "/invoices/{id}",
         "invoices": "/invoices",
@@ -26,6 +27,11 @@ class RMSManager:
         "products": "/products",
         "stock_levels": "/stock_levels",
     }
+
+    POST_DICTIONARY = {
+        "opportunities_quick_check_in": "/opportunities/{id}/quick_check_in"
+    }
+
     PUT_DICTIONARY = {"opportunity": "/opportunities/{id}"}
 
     OPPORTUNITY_KEYS_TO_CLEAN = [
@@ -43,10 +49,10 @@ class RMSManager:
             "X-SUBDOMAIN": subdomain,
             "X-AUTH-TOKEN": token,
         }  # Creation of headers using subdomain and token for Requests
-        """for every item in the GET dictionary, create an object to handle GET json"""
         for key, uri in self.GET_DICTIONARY.items():
             MethodManager("get", key, uri)
-        """for every item in the PUT dictionary, create an object to handle PUT json"""
+        for key, uri in self.POST_DICTIONARY.items():
+            MethodManager("post", key, uri)
         for key, uri in self.PUT_DICTIONARY.items():
             MethodManager("put", key, uri)
 
@@ -83,6 +89,9 @@ class MethodManager(RMSManager):
             if method == "get":
                 return self.get_json
 
+            if method == "post":
+                return self.post_json
+
             if method == "put":
                 return self.put_json
 
@@ -96,6 +105,15 @@ class MethodManager(RMSManager):
         r = requests.get(url, headers=self.headers, params=params)
         logging.info(f"Status Code {r.status_code}")
         return json.loads(r.text)
+
+    def post_json(self, id=None, json=None):
+        """ Post requests method, responses with Status Code """
+
+        url = self.url
+        if id != None:
+            formatted_url = url.format(id=str(id))
+        r = requests.post(formatted_url, headers=self.headers, json=json)
+        return r
 
     def put_json(self, id, payload):
         """ Put requests method, reponds with Status Code """

@@ -43,6 +43,13 @@ class QuickInvoice(Resource):
         }
 
 
+@api.route("/global_check_in/<asset_id>")
+class GlobalCheckIn(Resource):
+    def post(self, asset_id):
+        response = rmshelper.global_check_in(asset_id, r)
+        return {"opportunities": response, "status_code": 200}
+
+
 @api.route("/invoices/<xero_invoice_uuid>/Email")
 class EmailInvoice(Resource):
     def post(self, xero_invoice_uuid):
