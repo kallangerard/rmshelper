@@ -1,6 +1,7 @@
 awscli
 black
 boto3
+faker
 pylint
 pytest
 rope

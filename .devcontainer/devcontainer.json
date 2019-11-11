@@ -11,6 +11,10 @@
   },
   "runArgs": [
     "-v",
-    "${env:HOME}${env:USERPROFILE}/.aws:/root/.aws"
+    "${env:HOME}${env:USERPROFILE}/.aws:/root/.aws",
+    "-e",
+    "RMS_AUTH_TOKEN=${env:RMS_AUTH_TOKEN}",
+    "-e",
+    "RMS_SUBDOMAIN=${env:RMS_SUBDOMAIN}"
   ]
 }
