@@ -14,3 +14,8 @@ GET /opportunities?q[opportunity_items_item_assets_stock_level_id_eq]=1234
 ```
 GET /stock_levels?q[asset_number_eq]=123-456
 ```
+
+## Get Opportunities that contain Asset Number (Barcode)
+```
+{{current-rms-base-url}}/opportunities?q[opportunity_items_item_assets_stock_level_asset_number_eq]=123-456&include[]=item_assets
+```
